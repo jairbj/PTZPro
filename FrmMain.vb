@@ -48,7 +48,9 @@ Public Class frmMain
 
     Private Sub btStart_Click(sender As Object, e As EventArgs) Handles btStart.Click
         Dim selectedCamera As Camera = lstbxCameras.SelectedItem.Row.Item(1)
-        Debug.WriteLine(selectedCamera.name)
+        Dim frmCameraControl As New FrmCameraContol(selectedCamera)
+        frmCameraControl.Show()
+        Me.Dispose()
     End Sub
 
     Private Sub AddCameraToolStripMenuItem_Click(sender As Object, e As EventArgs) Handles AddCameraToolStripMenuItem.Click

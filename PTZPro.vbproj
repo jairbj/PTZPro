@@ -74,11 +74,11 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Camera.vb" />
-    <Compile Include="Form1.vb">
+    <Compile Include="FrmCameraContol.vb">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Form1.Designer.vb">
-      <DependentUpon>Form1.vb</DependentUpon>
+    <Compile Include="FrmCameraContol.Designer.vb">
+      <DependentUpon>FrmCameraContol.vb</DependentUpon>
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="FrmCameraConfig.Designer.vb">
@@ -113,8 +113,8 @@
     <Compile Include="Protocols\Visca.vb" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Form1.resx">
-      <DependentUpon>Form1.vb</DependentUpon>
+    <EmbeddedResource Include="FrmCameraContol.resx">
+      <DependentUpon>FrmCameraContol.vb</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="FrmCameraConfig.resx">
       <DependentUpon>FrmCameraConfig.vb</DependentUpon>

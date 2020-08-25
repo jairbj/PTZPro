@@ -9,7 +9,10 @@ Public Class FrmCameraConfig
         Edit = False
     End Enum
     Public Sub New(mode As FormMode, fileName As String)
+        ' This call is required by the designer.
         InitializeComponent()
+
+        ' Add any initialization after the InitializeComponent() call.
         Me.modeAdd = mode
         Me.fileName = fileName
 

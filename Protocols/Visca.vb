@@ -160,8 +160,9 @@
     Private Const PT_POSITION_INQ As Byte = &H12
     Private Const PT_DATASCREEN_INQ As Byte = &H6
 
-    Private Const PAN_MAX_SPEED As Int16 = 24
-    Private Const TILT_MAX_SPEED As Int16 = 20
+    Public Const PAN_MAX_SPEED As Int16 = 24
+    Public Const TILT_MAX_SPEED As Int16 = 20
+    Public Const ZOOM_MAX_SPEED As Int16 = 7
 
     Public Enum PTHorizontalDirection
         Left = PT_DRIVE_HORIZ_LEFT
@@ -173,6 +174,11 @@
         Up = PT_DRIVE_VERT_UP
         Down = PT_DRIVE_VERT_DOWN
         StopMove = PT_DRIVE_VERT_STOP
+    End Enum
+
+    Public Enum ZoomDirection
+        Plus = ZOOM_TELE_SPEED
+        Minus = ZOOM_WIDE_SPEED
     End Enum
 
     Private cameraNumber As Int16
@@ -208,9 +214,9 @@
         Return PTMove()
     End Function
     Public Function PTMove(Optional horizontalDirection As PTHorizontalDirection = PTHorizontalDirection.StopMove,
-                           Optional horizontalSpeed As Int16 = 0,
+                           Optional horizontalSpeed As Int16 = 1,
                            Optional verticalDirection As PTVerticalDirection = PTHorizontalDirection.StopMove,
-                           Optional verticalSpeed As Int16 = 0) As Byte()
+                           Optional verticalSpeed As Int16 = 1) As Byte()
 
         If horizontalSpeed > PAN_MAX_SPEED Then
             horizontalSpeed = PAN_MAX_SPEED
@@ -231,4 +237,30 @@
             TERMINATOR
         }
     End Function
+
+    Function ZoomStop()
+        Return New Byte() {
+            cameraHeader,
+            COMMAND,
+            CATEGORY_CAMERA1,
+            ZOOM,
+            ZOOM_STOP,
+            TERMINATOR
+        }
+    End Function
+
+    Function ZoomMove(zoomDir As ZoomDirection, Optional speed As Int16 = 0)
+        If speed > ZOOM_MAX_SPEED Then
+            speed = ZOOM_MAX_SPEED
+        End If
+        Return New Byte() {
+            cameraHeader,
+            COMMAND,
+            CATEGORY_CAMERA1,
+            ZOOM,
+            zoomDir Or speed,
+            TERMINATOR
+        }
+    End Function
+
 End Class
