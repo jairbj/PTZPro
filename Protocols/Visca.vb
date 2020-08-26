@@ -117,6 +117,7 @@
     Private Const MEMORY_RESET As Byte = &H0
     Private Const MEMORY_SET As Byte = &H1
     Private Const MEMORY_RECALL As Byte = &H2
+    Private Const MEMORY_RECALL_SPEED As Byte = &H1
     Private Const DISPLAY As Byte = &H15
     Private Const DISPLAY_TOGGLE As Byte = &H10
     Private Const DATE_TIME_SET As Byte = &H70
@@ -221,6 +222,17 @@
     Public Function PTStop() As Byte()
         Return PTMove()
     End Function
+
+    Public Function PTHome() As Byte()
+        Return New Byte() {
+            cameraHeader,
+            COMMAND,
+            CATEGORY_PAN_TILTER,
+            PT_HOME,
+            TERMINATOR
+        }
+    End Function
+
     Public Function PTMove(Optional horizontalDirection As PTHorizontalDirection = PTHorizontalDirection.StopMove,
                            Optional verticalDirection As PTVerticalDirection = PTHorizontalDirection.StopMove,
                            Optional horizontalSpeed As Int16 = 1,
@@ -246,6 +258,7 @@
         }
     End Function
 
+    ' TODO
     Public Function PTMoveAbsolute(horizontalPosition As Int16,
                                    verticalPosition As Int16,
                                    Optional horizontalSpeed As Int16 = 1,
@@ -257,8 +270,6 @@
         If verticalSpeed > TILT_MAX_SPEED Then
             verticalSpeed = TILT_MAX_SPEED
         End If
-
-
     End Function
 
     Function ZoomStop()
@@ -355,6 +366,44 @@
         End If
 
         Return BitConverter.ToInt16(result, 0)
+    End Function
+
+    Public Function SetPreset(id As Byte) As Byte()
+        Return New Byte() {
+           cameraHeader,
+           COMMAND,
+           CATEGORY_CAMERA1,
+           MEMORY,
+           MEMORY_SET,
+           id,
+           TERMINATOR
+       }
+    End Function
+
+    Public Function GetPreset(id As Byte) As Byte()
+        Return New Byte() {
+           cameraHeader,
+           COMMAND,
+           CATEGORY_CAMERA1,
+           MEMORY,
+           MEMORY_RECALL,
+           id,
+           TERMINATOR
+       }
+    End Function
+
+    Public Function PresetSpeed(speed As Byte) As Byte()
+        If speed > PAN_MAX_SPEED Then
+            speed = PAN_MAX_SPEED
+        End If
+        Return New Byte() {
+          cameraHeader,
+          COMMAND,
+          CATEGORY_PAN_TILTER,
+          MEMORY_RECALL_SPEED,
+          speed,
+          TERMINATOR
+      }
     End Function
 
 End Class

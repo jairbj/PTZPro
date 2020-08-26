@@ -7,6 +7,8 @@ Public Class FrmCameraContol
     Dim visca As Visca = New Visca(1)
     Dim camera As Camera
 
+    Dim isUpdatingPosition As Boolean = False
+
     Public Sub New(camera As Camera)
         ' This call is required by the designer.
         InitializeComponent()
@@ -34,8 +36,10 @@ Public Class FrmCameraContol
     Private Sub tcpDisconnect()
         tmrStatus.Stop()
         btConnectDisconnect.Enabled = False
-        networkStream.Close()
-        tcpClient.Close()
+        If tcpClient.Connected Then
+            networkStream.Close()
+            tcpClient.Close()
+        End If
         lblStatus.Text = "Disconnected"
         btConnectDisconnect.Text = "Connect"
         btConnectDisconnect.Enabled = True
@@ -145,10 +149,14 @@ Public Class FrmCameraContol
     End Sub
 
     Private Sub tmrStatus_Tick(sender As Object, e As EventArgs) Handles tmrStatus.Tick
-        updatePosition()
+        UpdatePosition()
     End Sub
 
-    Private Sub updatePosition()
+    Private Sub UpdatePosition()
+        If isUpdatingPosition Then
+            Return
+        End If
+        isUpdatingPosition = True
         If tcpClient.Connected Then
             Dim data = visca.InquirePanTiltPosition
             networkStream.Write(data, 0, data.Length)
@@ -177,6 +185,129 @@ Public Class FrmCameraContol
             statusPan.Text = "P:" & camera.panPosition
             statusTilt.Text = "T:" & camera.tiltPosition
             statusZoom.Text = "Z:" & camera.zoomPosition
+        End If
+        isUpdatingPosition = False
+    End Sub
+
+    Private Sub trkPTSpeed_ValueChanged(sender As Object, e As EventArgs) Handles trkPTSpeed.ValueChanged
+        camera.userPTSpeed = trkPTSpeed.Value
+        camera.SaveSettings()
+    End Sub
+    Private Sub trkZoomSpeed_ValueChanged(sender As Object, e As EventArgs) Handles trkZoomSpeed.ValueChanged
+        camera.userZoomSpeed = trkZoomSpeed.Value
+        camera.SaveSettings()
+    End Sub
+
+    Private Sub FrmCameraContol_Load(sender As Object, e As EventArgs) Handles MyBase.Load
+        trkPTSpeed.Value = camera.userPTSpeed
+        trkZoomSpeed.Value = camera.userZoomSpeed
+
+        LoadPresets()
+    End Sub
+
+    Private Sub LoadPresets()
+        lstvPresets.Clear()
+        For Each preset In camera.presets
+            If preset IsNot Nothing Then
+                Dim li As New ListViewItem
+                li.Tag = preset
+                li.Text = preset.name
+                lstvPresets.Items.Add(li)
+            End If
+        Next
+    End Sub
+
+    Private Sub ctxMenuPresets_Opening(sender As Object, e As System.ComponentModel.CancelEventArgs) Handles ctxMenuPresets.Opening
+        ' Doesn't open the context menu if no item is selected
+        e.Cancel = (lstvPresets.SelectedItems.Count < 1)
+    End Sub
+
+    Private Sub DeletePresetToolStripMenuItem_Click(sender As Object, e As EventArgs) Handles DeletePresetToolStripMenuItem.Click
+        Dim preset As CameraPreset = lstvPresets.SelectedItems(0).Tag
+        camera.RemovePreset(preset.id)
+        camera.SaveSettings()
+        LoadPresets()
+    End Sub
+
+    Private Sub lstvPresets_DoubleClick(sender As Object, e As EventArgs) Handles lstvPresets.DoubleClick
+        If lstvPresets.SelectedItems.Count < 1 Then
+            Return
+        End If
+
+        Dim preset As CameraPreset = lstvPresets.SelectedItems(0).Tag
+
+        Dim speed As Byte
+        If My.Computer.Keyboard.ShiftKeyDown Then
+            speed = Visca.PAN_MAX_SPEED
+        ElseIf My.Computer.Keyboard.CtrlKeyDown Then
+            speed = Visca.PAN_MIN_SPEED
+        Else
+            speed = trkPTSpeed.Value
+        End If
+
+        networkWriter(visca.PresetSpeed(speed))
+        networkWriter(visca.GetPreset(preset.id))
+    End Sub
+
+    Private Sub EditPresetNameToolStripMenuItem_Click(sender As Object, e As EventArgs) Handles EditPresetNameToolStripMenuItem.Click
+        Dim newName As String = InputBox("New preset name",, "")
+        If newName = "" Then
+            MsgBox("Preset name can't be empty")
+            Return
+        End If
+
+        Dim preset As CameraPreset = lstvPresets.SelectedItems(0).Tag
+        preset.name = newName
+        camera.UpdatePreset(preset)
+        LoadPresets()
+    End Sub
+
+    Private Sub btSavePreset_Click(sender As Object, e As EventArgs) Handles btSavePreset.Click
+        If Not tcpClient.Connected() Then
+            Return
+        End If
+
+        Dim name As String = InputBox("Set a preset name",, "")
+        If name = "" Then
+            MsgBox("Preset name can't be empty")
+            Return
+        End If
+
+        UpdatePosition()
+
+        Dim preset As New CameraPreset
+        preset.name = name
+        preset.pan = camera.panPosition
+        preset.tilt = camera.tiltPosition
+        preset.zoom = camera.zoomPosition
+
+        Dim presetId = camera.AddPreset(preset)
+        networkWriter(visca.SetPreset(presetId))
+        LoadPresets()
+    End Sub
+
+    Private Sub UpdatePresetToolStripMenuItem_Click(sender As Object, e As EventArgs) Handles UpdatePresetToolStripMenuItem.Click
+        If Not tcpClient.Connected() Then
+            Return
+        End If
+
+        UpdatePosition()
+
+        Dim preset As CameraPreset = lstvPresets.SelectedItems(0).Tag
+        preset.pan = camera.panPosition
+        preset.tilt = camera.tiltPosition
+        preset.zoom = camera.zoomPosition
+
+        camera.UpdatePreset(preset)
+        networkWriter(visca.SetPreset(preset.id))
+        LoadPresets()
+    End Sub
+
+    Private Sub btCenter_MouseDown(sender As Object, e As MouseEventArgs) Handles btCenter.MouseDown
+        If My.Computer.Keyboard.ShiftKeyDown Then
+            networkWriter(visca.PTHome)
+        Else
+            networkWriter(visca.PTStop())
         End If
     End Sub
 End Class

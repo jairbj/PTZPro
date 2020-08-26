@@ -62,17 +62,17 @@ Public Class FrmCameraConfig
     End Sub
 
     Public Sub saveConfig()
-        Dim ini As New IniFile
+        Dim camera As New Camera(fileName)
 
-        ini.Load(fileName)
+        camera.name = txbName.Text
+        camera.ip = txbIP.Text
+        camera.port = txbPort.Text
+        Select Case cmbProtocol.Text
+            Case "VISCA TCP"
+                camera.protocol = Camera.ProtocolType.ViscaTCP
+        End Select
 
-        Dim section = ini.AddSection("CAMERA")
-        section.AddKey("Name").Value = txbName.Text
-        section.AddKey("IP").Value = txbIP.Text
-        section.AddKey("Port").Value = txbPort.Text
-        section.AddKey("Protocol").Value = cmbProtocol.Text
-
-        ini.Save(fileName)
+        camera.SaveSettings()
     End Sub
 
     Private Sub loadData()

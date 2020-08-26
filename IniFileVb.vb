@@ -152,6 +152,17 @@ Public Class IniFile
         Return Nothing
     End Function
 
+    ' Returns an IniSection to the section by name or creates it
+    Public Function GetOrAddSection(ByVal sSection As String) As IniSection
+        Dim section = GetSection(sSection)
+
+        If section IsNot Nothing Then
+            Return section
+        End If
+
+        Return AddSection(sSection)
+    End Function
+
     '  Returns a KeyValue in a certain section
     Public Function GetKeyValue(ByVal sSection As String, ByVal sKey As String) As String
         Dim s As IniSection = GetSection(sSection)
@@ -286,6 +297,20 @@ Public Class IniFile
                 Return DirectCast(m_keys(sKey), IniKey)
             End If
             Return Nothing
+        End Function
+
+        ' Returns a IniKey object to the key by name, NULL if it was not found
+        Public Function GetKey(ByVal sKey As String, defaultValue As String) As IniKey
+            Dim key = GetKey(sKey)
+
+            If key IsNot Nothing Then
+                Return key
+            End If
+
+            key = AddKey(sKey)
+            key.Value = defaultValue
+
+            Return key
         End Function
 
         ' Sets the section name, returns true on success, fails if the section

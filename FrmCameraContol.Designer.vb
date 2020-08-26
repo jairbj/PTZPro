@@ -1,9 +1,9 @@
-﻿<Global.Microsoft.VisualBasic.CompilerServices.DesignerGenerated()> _
+﻿<Global.Microsoft.VisualBasic.CompilerServices.DesignerGenerated()>
 Partial Class FrmCameraContol
     Inherits System.Windows.Forms.Form
 
     'Form overrides dispose to clean up the component list.
-    <System.Diagnostics.DebuggerNonUserCode()> _
+    <System.Diagnostics.DebuggerNonUserCode()>
     Protected Overrides Sub Dispose(ByVal disposing As Boolean)
         Try
             If disposing AndAlso components IsNot Nothing Then
@@ -20,13 +20,14 @@ Partial Class FrmCameraContol
     'NOTE: The following procedure is required by the Windows Form Designer
     'It can be modified using the Windows Form Designer.  
     'Do not modify it using the code editor.
-    <System.Diagnostics.DebuggerStepThrough()> _
+    <System.Diagnostics.DebuggerStepThrough()>
     Private Sub InitializeComponent()
         Me.components = New System.ComponentModel.Container()
         Dim resources As System.ComponentModel.ComponentResourceManager = New System.ComponentModel.ComponentResourceManager(GetType(FrmCameraContol))
         Me.btConnectDisconnect = New System.Windows.Forms.Button()
         Me.imgIcons = New System.Windows.Forms.ImageList(Me.components)
         Me.pnPtz = New System.Windows.Forms.Panel()
+        Me.btCenter = New System.Windows.Forms.Button()
         Me.btDownRight = New System.Windows.Forms.Button()
         Me.btDown = New System.Windows.Forms.Button()
         Me.btDownLeft = New System.Windows.Forms.Button()
@@ -46,10 +47,17 @@ Partial Class FrmCameraContol
         Me.btZoomPlus = New System.Windows.Forms.Button()
         Me.btZoomMinus = New System.Windows.Forms.Button()
         Me.tmrStatus = New System.Windows.Forms.Timer(Me.components)
+        Me.btSavePreset = New System.Windows.Forms.Button()
+        Me.ctxMenuPresets = New System.Windows.Forms.ContextMenuStrip(Me.components)
+        Me.EditPresetNameToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
+        Me.UpdatePresetToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
+        Me.DeletePresetToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
+        Me.lstvPresets = New System.Windows.Forms.ListView()
         Me.pnPtz.SuspendLayout()
         CType(Me.trkPTSpeed, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.statusBar.SuspendLayout()
         CType(Me.trkZoomSpeed, System.ComponentModel.ISupportInitialize).BeginInit()
+        Me.ctxMenuPresets.SuspendLayout()
         Me.SuspendLayout()
         '
         'btConnectDisconnect
@@ -77,9 +85,11 @@ Partial Class FrmCameraContol
         Me.imgIcons.Images.SetKeyName(7, "down_right.png")
         Me.imgIcons.Images.SetKeyName(8, "zoom_plus.png")
         Me.imgIcons.Images.SetKeyName(9, "zoom_minus.png")
+        Me.imgIcons.Images.SetKeyName(10, "center.png")
         '
         'pnPtz
         '
+        Me.pnPtz.Controls.Add(Me.btCenter)
         Me.pnPtz.Controls.Add(Me.btDownRight)
         Me.pnPtz.Controls.Add(Me.btDown)
         Me.pnPtz.Controls.Add(Me.btDownLeft)
@@ -92,6 +102,16 @@ Partial Class FrmCameraContol
         Me.pnPtz.Name = "pnPtz"
         Me.pnPtz.Size = New System.Drawing.Size(189, 184)
         Me.pnPtz.TabIndex = 5
+        '
+        'btCenter
+        '
+        Me.btCenter.ImageIndex = 10
+        Me.btCenter.ImageList = Me.imgIcons
+        Me.btCenter.Location = New System.Drawing.Point(69, 67)
+        Me.btCenter.Name = "btCenter"
+        Me.btCenter.Size = New System.Drawing.Size(50, 50)
+        Me.btCenter.TabIndex = 9
+        Me.btCenter.UseVisualStyleBackColor = True
         '
         'btDownRight
         '
@@ -207,7 +227,7 @@ Partial Class FrmCameraContol
         'statusBar
         '
         Me.statusBar.Items.AddRange(New System.Windows.Forms.ToolStripItem() {Me.statusPan, Me.statusTilt, Me.statusZoom})
-        Me.statusBar.Location = New System.Drawing.Point(0, 297)
+        Me.statusBar.Location = New System.Drawing.Point(0, 424)
         Me.statusBar.Name = "statusBar"
         Me.statusBar.Size = New System.Drawing.Size(349, 22)
         Me.statusBar.TabIndex = 13
@@ -264,11 +284,61 @@ Partial Class FrmCameraContol
         '
         Me.tmrStatus.Interval = 1000
         '
+        'btSavePreset
+        '
+        Me.btSavePreset.Location = New System.Drawing.Point(11, 290)
+        Me.btSavePreset.Name = "btSavePreset"
+        Me.btSavePreset.Size = New System.Drawing.Size(325, 23)
+        Me.btSavePreset.TabIndex = 17
+        Me.btSavePreset.Text = "Save New Preset"
+        Me.btSavePreset.UseVisualStyleBackColor = True
+        '
+        'ctxMenuPresets
+        '
+        Me.ctxMenuPresets.Items.AddRange(New System.Windows.Forms.ToolStripItem() {Me.EditPresetNameToolStripMenuItem, Me.UpdatePresetToolStripMenuItem, Me.DeletePresetToolStripMenuItem})
+        Me.ctxMenuPresets.Name = "ctxMenuPresets"
+        Me.ctxMenuPresets.Size = New System.Drawing.Size(165, 70)
+        '
+        'EditPresetNameToolStripMenuItem
+        '
+        Me.EditPresetNameToolStripMenuItem.Name = "EditPresetNameToolStripMenuItem"
+        Me.EditPresetNameToolStripMenuItem.Size = New System.Drawing.Size(164, 22)
+        Me.EditPresetNameToolStripMenuItem.Text = "Edit Preset Name"
+        '
+        'UpdatePresetToolStripMenuItem
+        '
+        Me.UpdatePresetToolStripMenuItem.Name = "UpdatePresetToolStripMenuItem"
+        Me.UpdatePresetToolStripMenuItem.Size = New System.Drawing.Size(164, 22)
+        Me.UpdatePresetToolStripMenuItem.Text = "Update Preset"
+        '
+        'DeletePresetToolStripMenuItem
+        '
+        Me.DeletePresetToolStripMenuItem.Name = "DeletePresetToolStripMenuItem"
+        Me.DeletePresetToolStripMenuItem.Size = New System.Drawing.Size(164, 22)
+        Me.DeletePresetToolStripMenuItem.Text = "Delete Preset"
+        '
+        'lstvPresets
+        '
+        Me.lstvPresets.Anchor = CType((((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Bottom) _
+            Or System.Windows.Forms.AnchorStyles.Left) _
+            Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
+        Me.lstvPresets.ContextMenuStrip = Me.ctxMenuPresets
+        Me.lstvPresets.HideSelection = False
+        Me.lstvPresets.Location = New System.Drawing.Point(11, 319)
+        Me.lstvPresets.MultiSelect = False
+        Me.lstvPresets.Name = "lstvPresets"
+        Me.lstvPresets.Size = New System.Drawing.Size(325, 97)
+        Me.lstvPresets.TabIndex = 19
+        Me.lstvPresets.UseCompatibleStateImageBehavior = False
+        Me.lstvPresets.View = System.Windows.Forms.View.List
+        '
         'FrmCameraContol
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(8.0!, 16.0!)
         Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
-        Me.ClientSize = New System.Drawing.Size(349, 319)
+        Me.ClientSize = New System.Drawing.Size(349, 446)
+        Me.Controls.Add(Me.lstvPresets)
+        Me.Controls.Add(Me.btSavePreset)
         Me.Controls.Add(Me.btZoomMinus)
         Me.Controls.Add(Me.btZoomPlus)
         Me.Controls.Add(Me.trkZoomSpeed)
@@ -287,6 +357,7 @@ Partial Class FrmCameraContol
         Me.statusBar.ResumeLayout(False)
         Me.statusBar.PerformLayout()
         CType(Me.trkZoomSpeed, System.ComponentModel.ISupportInitialize).EndInit()
+        Me.ctxMenuPresets.ResumeLayout(False)
         Me.ResumeLayout(False)
         Me.PerformLayout()
 
@@ -314,4 +385,11 @@ Partial Class FrmCameraContol
     Friend WithEvents btZoomPlus As Button
     Friend WithEvents btZoomMinus As Button
     Friend WithEvents tmrStatus As Timer
+    Friend WithEvents btSavePreset As Button
+    Friend WithEvents ctxMenuPresets As ContextMenuStrip
+    Friend WithEvents UpdatePresetToolStripMenuItem As ToolStripMenuItem
+    Friend WithEvents DeletePresetToolStripMenuItem As ToolStripMenuItem
+    Friend WithEvents lstvPresets As ListView
+    Friend WithEvents EditPresetNameToolStripMenuItem As ToolStripMenuItem
+    Friend WithEvents btCenter As Button
 End Class
