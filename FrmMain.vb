@@ -71,4 +71,8 @@ Public Class frmMain
         File.Delete(selectedCamera.iniFileName)
         loadCameras()
     End Sub
+
+    Private Sub AboutToolStripMenuItem_Click(sender As Object, e As EventArgs) Handles AboutToolStripMenuItem.Click
+        frmAbout.ShowDialog()
+    End Sub
 End Class

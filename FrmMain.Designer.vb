@@ -29,12 +29,13 @@ Partial Class frmMain
         Me.DeleteCameraToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
         Me.lstbxCameras = New System.Windows.Forms.ListBox()
         Me.btStart = New System.Windows.Forms.Button()
+        Me.AboutToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
         Me.menuMain.SuspendLayout()
         Me.SuspendLayout()
         '
         'menuMain
         '
-        Me.menuMain.Items.AddRange(New System.Windows.Forms.ToolStripItem() {Me.AddCameraToolStripMenuItem, Me.EditCameraSettingsToolStripMenuItem, Me.DeleteCameraToolStripMenuItem})
+        Me.menuMain.Items.AddRange(New System.Windows.Forms.ToolStripItem() {Me.AddCameraToolStripMenuItem, Me.EditCameraSettingsToolStripMenuItem, Me.DeleteCameraToolStripMenuItem, Me.AboutToolStripMenuItem})
         resources.ApplyResources(Me.menuMain, "menuMain")
         Me.menuMain.Name = "menuMain"
         '
@@ -65,6 +66,11 @@ Partial Class frmMain
         Me.btStart.Name = "btStart"
         Me.btStart.UseVisualStyleBackColor = True
         '
+        'AboutToolStripMenuItem
+        '
+        Me.AboutToolStripMenuItem.Name = "AboutToolStripMenuItem"
+        resources.ApplyResources(Me.AboutToolStripMenuItem, "AboutToolStripMenuItem")
+        '
         'frmMain
         '
         resources.ApplyResources(Me, "$this")
@@ -87,4 +93,5 @@ Partial Class frmMain
     Friend WithEvents DeleteCameraToolStripMenuItem As ToolStripMenuItem
     Friend WithEvents lstbxCameras As ListBox
     Friend WithEvents btStart As Button
+    Friend WithEvents AboutToolStripMenuItem As ToolStripMenuItem
 End Class

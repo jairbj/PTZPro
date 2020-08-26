@@ -55,17 +55,20 @@ Partial Class FrmCameraContol
         Me.lstvPresets = New System.Windows.Forms.ListView()
         Me.lblCamera = New System.Windows.Forms.Label()
         Me.Label3 = New System.Windows.Forms.Label()
+        Me.MenuStrip1 = New System.Windows.Forms.MenuStrip()
+        Me.AboutToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
         Me.pnPtz.SuspendLayout()
         CType(Me.trkPTSpeed, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.statusBar.SuspendLayout()
         CType(Me.trkZoomSpeed, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.ctxMenuPresets.SuspendLayout()
+        Me.MenuStrip1.SuspendLayout()
         Me.SuspendLayout()
         '
         'btConnectDisconnect
         '
         Me.btConnectDisconnect.Enabled = False
-        Me.btConnectDisconnect.Location = New System.Drawing.Point(237, 10)
+        Me.btConnectDisconnect.Location = New System.Drawing.Point(237, 33)
         Me.btConnectDisconnect.Margin = New System.Windows.Forms.Padding(4)
         Me.btConnectDisconnect.Name = "btConnectDisconnect"
         Me.btConnectDisconnect.Size = New System.Drawing.Size(100, 28)
@@ -100,7 +103,7 @@ Partial Class FrmCameraContol
         Me.pnPtz.Controls.Add(Me.btUpRight)
         Me.pnPtz.Controls.Add(Me.btUpLeft)
         Me.pnPtz.Controls.Add(Me.btUp)
-        Me.pnPtz.Location = New System.Drawing.Point(17, 60)
+        Me.pnPtz.Location = New System.Drawing.Point(17, 83)
         Me.pnPtz.Name = "pnPtz"
         Me.pnPtz.Size = New System.Drawing.Size(189, 184)
         Me.pnPtz.TabIndex = 5
@@ -198,7 +201,7 @@ Partial Class FrmCameraContol
         '
         'trkPTSpeed
         '
-        Me.trkPTSpeed.Location = New System.Drawing.Point(17, 255)
+        Me.trkPTSpeed.Location = New System.Drawing.Point(17, 278)
         Me.trkPTSpeed.Maximum = 24
         Me.trkPTSpeed.Minimum = 1
         Me.trkPTSpeed.Name = "trkPTSpeed"
@@ -210,7 +213,7 @@ Partial Class FrmCameraContol
         '
         Me.Label1.AutoSize = True
         Me.Label1.Font = New System.Drawing.Font("Microsoft Sans Serif", 12.0!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.Label1.Location = New System.Drawing.Point(13, 35)
+        Me.Label1.Location = New System.Drawing.Point(13, 58)
         Me.Label1.Name = "Label1"
         Me.Label1.Size = New System.Drawing.Size(67, 20)
         Me.Label1.TabIndex = 11
@@ -220,7 +223,7 @@ Partial Class FrmCameraContol
         '
         Me.lblStatus.AutoSize = True
         Me.lblStatus.Font = New System.Drawing.Font("Microsoft Sans Serif", 12.0!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.lblStatus.Location = New System.Drawing.Point(86, 35)
+        Me.lblStatus.Location = New System.Drawing.Point(86, 58)
         Me.lblStatus.Name = "lblStatus"
         Me.lblStatus.Size = New System.Drawing.Size(100, 20)
         Me.lblStatus.TabIndex = 12
@@ -229,7 +232,7 @@ Partial Class FrmCameraContol
         'statusBar
         '
         Me.statusBar.Items.AddRange(New System.Windows.Forms.ToolStripItem() {Me.statusPan, Me.statusTilt, Me.statusZoom})
-        Me.statusBar.Location = New System.Drawing.Point(0, 424)
+        Me.statusBar.Location = New System.Drawing.Point(0, 457)
         Me.statusBar.Name = "statusBar"
         Me.statusBar.Size = New System.Drawing.Size(349, 22)
         Me.statusBar.TabIndex = 13
@@ -255,7 +258,7 @@ Partial Class FrmCameraContol
         '
         'trkZoomSpeed
         '
-        Me.trkZoomSpeed.Location = New System.Drawing.Point(293, 60)
+        Me.trkZoomSpeed.Location = New System.Drawing.Point(293, 83)
         Me.trkZoomSpeed.Maximum = 7
         Me.trkZoomSpeed.Name = "trkZoomSpeed"
         Me.trkZoomSpeed.Orientation = System.Windows.Forms.Orientation.Vertical
@@ -266,7 +269,7 @@ Partial Class FrmCameraContol
         '
         Me.btZoomPlus.ImageIndex = 8
         Me.btZoomPlus.ImageList = Me.imgIcons
-        Me.btZoomPlus.Location = New System.Drawing.Point(228, 101)
+        Me.btZoomPlus.Location = New System.Drawing.Point(228, 124)
         Me.btZoomPlus.Name = "btZoomPlus"
         Me.btZoomPlus.Size = New System.Drawing.Size(50, 50)
         Me.btZoomPlus.TabIndex = 9
@@ -276,7 +279,7 @@ Partial Class FrmCameraContol
         '
         Me.btZoomMinus.ImageIndex = 9
         Me.btZoomMinus.ImageList = Me.imgIcons
-        Me.btZoomMinus.Location = New System.Drawing.Point(228, 157)
+        Me.btZoomMinus.Location = New System.Drawing.Point(228, 180)
         Me.btZoomMinus.Name = "btZoomMinus"
         Me.btZoomMinus.Size = New System.Drawing.Size(50, 50)
         Me.btZoomMinus.TabIndex = 15
@@ -288,7 +291,7 @@ Partial Class FrmCameraContol
         '
         'btSavePreset
         '
-        Me.btSavePreset.Location = New System.Drawing.Point(11, 290)
+        Me.btSavePreset.Location = New System.Drawing.Point(11, 313)
         Me.btSavePreset.Name = "btSavePreset"
         Me.btSavePreset.Size = New System.Drawing.Size(325, 23)
         Me.btSavePreset.TabIndex = 17
@@ -326,10 +329,10 @@ Partial Class FrmCameraContol
             Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
         Me.lstvPresets.ContextMenuStrip = Me.ctxMenuPresets
         Me.lstvPresets.HideSelection = False
-        Me.lstvPresets.Location = New System.Drawing.Point(11, 319)
+        Me.lstvPresets.Location = New System.Drawing.Point(11, 342)
         Me.lstvPresets.MultiSelect = False
         Me.lstvPresets.Name = "lstvPresets"
-        Me.lstvPresets.Size = New System.Drawing.Size(325, 97)
+        Me.lstvPresets.Size = New System.Drawing.Size(325, 107)
         Me.lstvPresets.TabIndex = 19
         Me.lstvPresets.UseCompatibleStateImageBehavior = False
         Me.lstvPresets.View = System.Windows.Forms.View.List
@@ -338,7 +341,7 @@ Partial Class FrmCameraContol
         '
         Me.lblCamera.AutoSize = True
         Me.lblCamera.Font = New System.Drawing.Font("Microsoft Sans Serif", 12.0!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.lblCamera.Location = New System.Drawing.Point(86, 9)
+        Me.lblCamera.Location = New System.Drawing.Point(86, 32)
         Me.lblCamera.Name = "lblCamera"
         Me.lblCamera.Size = New System.Drawing.Size(71, 20)
         Me.lblCamera.TabIndex = 21
@@ -348,17 +351,32 @@ Partial Class FrmCameraContol
         '
         Me.Label3.AutoSize = True
         Me.Label3.Font = New System.Drawing.Font("Microsoft Sans Serif", 12.0!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.Label3.Location = New System.Drawing.Point(13, 9)
+        Me.Label3.Location = New System.Drawing.Point(13, 32)
         Me.Label3.Name = "Label3"
         Me.Label3.Size = New System.Drawing.Size(76, 20)
         Me.Label3.TabIndex = 20
         Me.Label3.Text = "Camera:"
         '
+        'MenuStrip1
+        '
+        Me.MenuStrip1.Items.AddRange(New System.Windows.Forms.ToolStripItem() {Me.AboutToolStripMenuItem})
+        Me.MenuStrip1.Location = New System.Drawing.Point(0, 0)
+        Me.MenuStrip1.Name = "MenuStrip1"
+        Me.MenuStrip1.Size = New System.Drawing.Size(349, 24)
+        Me.MenuStrip1.TabIndex = 22
+        Me.MenuStrip1.Text = "MenuStrip1"
+        '
+        'AboutToolStripMenuItem
+        '
+        Me.AboutToolStripMenuItem.Name = "AboutToolStripMenuItem"
+        Me.AboutToolStripMenuItem.Size = New System.Drawing.Size(52, 20)
+        Me.AboutToolStripMenuItem.Text = "About"
+        '
         'FrmCameraContol
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(8.0!, 16.0!)
         Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
-        Me.ClientSize = New System.Drawing.Size(349, 446)
+        Me.ClientSize = New System.Drawing.Size(349, 479)
         Me.Controls.Add(Me.lblCamera)
         Me.Controls.Add(Me.Label3)
         Me.Controls.Add(Me.lstvPresets)
@@ -367,12 +385,14 @@ Partial Class FrmCameraContol
         Me.Controls.Add(Me.btZoomPlus)
         Me.Controls.Add(Me.trkZoomSpeed)
         Me.Controls.Add(Me.statusBar)
+        Me.Controls.Add(Me.MenuStrip1)
         Me.Controls.Add(Me.lblStatus)
         Me.Controls.Add(Me.Label1)
         Me.Controls.Add(Me.trkPTSpeed)
         Me.Controls.Add(Me.pnPtz)
         Me.Controls.Add(Me.btConnectDisconnect)
         Me.Font = New System.Drawing.Font("Microsoft Sans Serif", 9.75!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+        Me.MainMenuStrip = Me.MenuStrip1
         Me.Margin = New System.Windows.Forms.Padding(4)
         Me.Name = "FrmCameraContol"
         Me.Text = "PTZPro - Camera Control"
@@ -382,6 +402,8 @@ Partial Class FrmCameraContol
         Me.statusBar.PerformLayout()
         CType(Me.trkZoomSpeed, System.ComponentModel.ISupportInitialize).EndInit()
         Me.ctxMenuPresets.ResumeLayout(False)
+        Me.MenuStrip1.ResumeLayout(False)
+        Me.MenuStrip1.PerformLayout()
         Me.ResumeLayout(False)
         Me.PerformLayout()
 
@@ -418,4 +440,6 @@ Partial Class FrmCameraContol
     Friend WithEvents btCenter As Button
     Friend WithEvents lblCamera As Label
     Friend WithEvents Label3 As Label
+    Friend WithEvents MenuStrip1 As MenuStrip
+    Friend WithEvents AboutToolStripMenuItem As ToolStripMenuItem
 End Class
