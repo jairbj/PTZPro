@@ -25,6 +25,7 @@ Public Class FrmCameraContol
             networkStream = tcpClient.GetStream()
             btConnectDisconnect.Text = "Disconnect"
             lblStatus.Text = "Connected"
+            tmrStatus.Start()
         Catch ex As Exception
             lblStatus.Text = "Error"
         End Try
@@ -32,6 +33,7 @@ Public Class FrmCameraContol
     End Sub
 
     Private Sub tcpDisconnect()
+        tmrStatus.Stop()
         btConnectDisconnect.Enabled = False
         networkStream.Close()
         tcpClient.Close()
@@ -85,7 +87,7 @@ Public Class FrmCameraContol
                 horizontalDirection = Visca.PTHorizontalDirection.Right
                 verticalDirection = Visca.PTVerticalDirection.Down
         End Select
-        Debug.WriteLine(speed)
+        'Debug.WriteLine(speed)
         Dim move = visca.PTMove(horizontalDirection, speed,
                                 verticalDirection, speed)
         networkWriter(move)
@@ -101,6 +103,7 @@ Public Class FrmCameraContol
     End Sub
 
     Private Sub FrmCameraContol_FormClosed(sender As Object, e As FormClosedEventArgs) Handles MyBase.FormClosed
+        tcpDisconnect()
         End
     End Sub
 
@@ -137,4 +140,35 @@ Public Class FrmCameraContol
             networkStream.Write(data, 0, data.Length)
         End If
     End Sub
+
+    Private Sub tmrStatus_Tick(sender As Object, e As EventArgs) Handles tmrStatus.Tick
+        Dim cameraResponseHeader = &H91
+        If tcpClient.Connected Then
+            Dim data = visca.InquirePanTiltPosition
+            networkStream.Write(data, 0, data.Length)
+
+            Dim bytes(tcpClient.ReceiveBufferSize) As Byte
+            networkStream.Read(bytes, 0, CInt(tcpClient.ReceiveBufferSize))
+
+            Dim response As Byte() = visca.getResponse(bytes, 11)
+            If Not response Is Nothing Then
+                'Debug.WriteLine(BitConverter.ToString(response).Replace("-", ""))
+                statusPan.Text = "P:" & visca.parsePanPosition(response)
+                statusTilt.Text = "T:" & visca.parseTiltPosition(response)
+            End If
+
+            data = visca.InquireZoomPosition
+            networkStream.Write(data, 0, data.Length)
+            networkStream.Read(bytes, 0, CInt(tcpClient.ReceiveBufferSize))
+
+            response = visca.getResponse(bytes, 7)
+            If Not response Is Nothing Then
+                'Debug.WriteLine(BitConverter.ToString(response).Replace("-", ""))
+                statusZoom.Text = "Z:" & visca.parseZoomPosition(response)
+            End If
+
+        End If
+    End Sub
+
+
 End Class

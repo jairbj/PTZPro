@@ -45,6 +45,7 @@ Partial Class FrmCameraContol
         Me.trkZoomSpeed = New System.Windows.Forms.TrackBar()
         Me.btZoomPlus = New System.Windows.Forms.Button()
         Me.btZoomMinus = New System.Windows.Forms.Button()
+        Me.tmrStatus = New System.Windows.Forms.Timer(Me.components)
         Me.pnPtz.SuspendLayout()
         CType(Me.trkPTSpeed, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.statusBar.SuspendLayout()
@@ -259,6 +260,10 @@ Partial Class FrmCameraContol
         Me.btZoomMinus.TabIndex = 15
         Me.btZoomMinus.UseVisualStyleBackColor = True
         '
+        'tmrStatus
+        '
+        Me.tmrStatus.Interval = 1000
+        '
         'FrmCameraContol
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(8.0!, 16.0!)
@@ -308,4 +313,5 @@ Partial Class FrmCameraContol
     Friend WithEvents trkZoomSpeed As TrackBar
     Friend WithEvents btZoomPlus As Button
     Friend WithEvents btZoomMinus As Button
+    Friend WithEvents tmrStatus As Timer
 End Class

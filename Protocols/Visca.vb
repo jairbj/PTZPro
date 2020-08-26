@@ -15,7 +15,7 @@
     Private Const RESPONSE_CLEAR As Byte = &H40
     Private Const RESPONSE_ADDRESS As Byte = &H30
     Private Const RESPONSE_ACK As Byte = &H40
-    Private Const RESPONSE_COMPLETED As Byte = &H50
+    Public Const RESPONSE_COMPLETED As Byte = &H50
     Private Const RESPONSE_ERROR As Byte = &H60
 
     ' Commands/inquiries codes
@@ -164,6 +164,11 @@
     Public Const TILT_MAX_SPEED As Int16 = 20
     Public Const ZOOM_MAX_SPEED As Int16 = 7
 
+    Public Enum ResponseSize
+        ZoomPos = 7
+        PTPos = 11
+    End Enum
+
     Public Enum PTHorizontalDirection
         Left = PT_DRIVE_HORIZ_LEFT
         Right = PT_DRIVE_HORIZ_RIGHT
@@ -261,6 +266,58 @@
             zoomDir Or speed,
             TERMINATOR
         }
+    End Function
+
+    Public Function getResponse(bytes As Byte(), expectedResponseSize As Integer) As Byte()
+        Dim initialPos = 0
+        For i As Integer = 0 To bytes.Length - 1
+            If bytes(i) = &HFF Then
+                Dim size = i - initialPos
+                Dim response(size) As Byte
+                Array.Copy(bytes, initialPos, response, 0, size + 1)
+                initialPos = i + 1
+                If response(1) = Visca.RESPONSE_COMPLETED And
+                    size = expectedResponseSize - 1 Then
+                    Return response
+                End If
+            End If
+        Next
+        Return Nothing
+    End Function
+
+    Public Function parsePanPosition(response As Byte()) As Int16
+        Return parseInt16FromResponse(
+            {response(2), response(3), response(4), response(5)}
+            )
+    End Function
+
+    Public Function parseTiltPosition(response As Byte()) As Int16
+        Return parseInt16FromResponse(
+            {response(6), response(7), response(8), response(9)}
+            )
+    End Function
+
+    Public Function parseZoomPosition(response As Byte()) As Int16
+        Return parseInt16FromResponse(
+            {response(2), response(3), response(4), response(5)}
+            )
+    End Function
+
+    Private Function parseInt16FromResponse(data As Byte()) As Int16
+        Dim result(1) As Byte
+        result(0) = data(0)
+        result(0) = result(0) << 4
+        result(0) = result(0) Or data(1)
+
+        result(1) = data(2)
+        result(1) = result(1) << 4
+        result(1) = result(1) Or data(3)
+
+        If (BitConverter.IsLittleEndian) Then
+            Array.Reverse(result)
+        End If
+
+        Return BitConverter.ToInt16(result, 0)
     End Function
 
 End Class
