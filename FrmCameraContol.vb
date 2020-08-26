@@ -201,6 +201,7 @@ Public Class FrmCameraContol
     Private Sub FrmCameraContol_Load(sender As Object, e As EventArgs) Handles MyBase.Load
         trkPTSpeed.Value = camera.userPTSpeed
         trkZoomSpeed.Value = camera.userZoomSpeed
+        lblCamera.Text = camera.name
 
         LoadPresets()
     End Sub

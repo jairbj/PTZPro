@@ -258,11 +258,14 @@
         }
     End Function
 
-    ' TODO
     Public Function PTMoveAbsolute(horizontalPosition As Int16,
                                    verticalPosition As Int16,
-                                   Optional horizontalSpeed As Int16 = 1,
-                                   Optional verticalSpeed As Int16 = 1) As Byte()
+                                   Optional horizontalSpeed As Byte = 1,
+                                   Optional verticalSpeed As Byte = 1) As Byte()
+
+        Dim pan = parsePositionFromInt16(horizontalPosition)
+        Dim tilt = parsePositionFromInt16(verticalPosition)
+
 
         If horizontalSpeed > PAN_MAX_SPEED Then
             horizontalSpeed = PAN_MAX_SPEED
@@ -270,6 +273,24 @@
         If verticalSpeed > TILT_MAX_SPEED Then
             verticalSpeed = TILT_MAX_SPEED
         End If
+
+        Return New Byte() {
+            cameraHeader,
+            COMMAND,
+            CATEGORY_PAN_TILTER,
+            PT_ABSOLUTE_POSITION,
+            horizontalSpeed,
+            verticalSpeed,
+            pan(0),
+            pan(1),
+            pan(2),
+            pan(3),
+            tilt(0),
+            tilt(1),
+            tilt(2),
+            tilt(3),
+            TERMINATOR
+            }
     End Function
 
     Function ZoomStop()
