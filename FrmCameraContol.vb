@@ -8,7 +8,6 @@ Public Class FrmCameraContol
     Dim camera As Camera
 
     Public Sub New(camera As Camera)
-
         ' This call is required by the designer.
         InitializeComponent()
 
@@ -60,6 +59,8 @@ Public Class FrmCameraContol
         Dim speed As Int16
         If My.Computer.Keyboard.ShiftKeyDown Then
             speed = Visca.PAN_MAX_SPEED
+        ElseIf My.Computer.Keyboard.CtrlKeyDown Then
+            speed = Visca.PAN_MIN_SPEED
         Else
             speed = trkPTSpeed.Value
         End If
@@ -88,8 +89,8 @@ Public Class FrmCameraContol
                 verticalDirection = Visca.PTVerticalDirection.Down
         End Select
         'Debug.WriteLine(speed)
-        Dim move = visca.PTMove(horizontalDirection, speed,
-                                verticalDirection, speed)
+        Dim move = visca.PTMove(horizontalDirection, verticalDirection,
+                                speed, speed)
         networkWriter(move)
     End Sub
 
@@ -114,6 +115,8 @@ Public Class FrmCameraContol
         Dim speed As Int16
         If My.Computer.Keyboard.ShiftKeyDown Then
             speed = Visca.ZOOM_MAX_SPEED
+        ElseIf My.Computer.Keyboard.CtrlKeyDown Then
+            speed = Visca.ZOOM_MIN_SPEED
         Else
             speed = trkZoomSpeed.Value
         End If
@@ -142,7 +145,10 @@ Public Class FrmCameraContol
     End Sub
 
     Private Sub tmrStatus_Tick(sender As Object, e As EventArgs) Handles tmrStatus.Tick
-        Dim cameraResponseHeader = &H91
+        updatePosition()
+    End Sub
+
+    Private Sub updatePosition()
         If tcpClient.Connected Then
             Dim data = visca.InquirePanTiltPosition
             networkStream.Write(data, 0, data.Length)
@@ -152,9 +158,9 @@ Public Class FrmCameraContol
 
             Dim response As Byte() = visca.getResponse(bytes, 11)
             If Not response Is Nothing Then
-                'Debug.WriteLine(BitConverter.ToString(response).Replace("-", ""))
-                statusPan.Text = "P:" & visca.parsePanPosition(response)
-                statusTilt.Text = "T:" & visca.parseTiltPosition(response)
+                camera.panPosition = visca.parsePanPosition(response)
+                camera.tiltPosition = visca.parseTiltPosition(response)
+                'Debug.WriteLine(BitConverter.ToString(response))
             End If
 
             data = visca.InquireZoomPosition
@@ -164,11 +170,13 @@ Public Class FrmCameraContol
             response = visca.getResponse(bytes, 7)
             If Not response Is Nothing Then
                 'Debug.WriteLine(BitConverter.ToString(response).Replace("-", ""))
-                statusZoom.Text = "Z:" & visca.parseZoomPosition(response)
+                camera.zoomPosition = visca.parseZoomPosition(response)
             End If
 
+
+            statusPan.Text = "P:" & camera.panPosition
+            statusTilt.Text = "T:" & camera.tiltPosition
+            statusZoom.Text = "Z:" & camera.zoomPosition
         End If
     End Sub
-
-
 End Class

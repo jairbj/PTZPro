@@ -160,8 +160,11 @@
     Private Const PT_POSITION_INQ As Byte = &H12
     Private Const PT_DATASCREEN_INQ As Byte = &H6
 
+    Public Const PAN_MIN_SPEED As Int16 = 1
     Public Const PAN_MAX_SPEED As Int16 = 24
+    Public Const TILT_MIN_SPEED As Int16 = 1
     Public Const TILT_MAX_SPEED As Int16 = 20
+    Public Const ZOOM_MIN_SPEED As Int16 = 1
     Public Const ZOOM_MAX_SPEED As Int16 = 7
 
     Public Enum ResponseSize
@@ -219,8 +222,8 @@
         Return PTMove()
     End Function
     Public Function PTMove(Optional horizontalDirection As PTHorizontalDirection = PTHorizontalDirection.StopMove,
-                           Optional horizontalSpeed As Int16 = 1,
                            Optional verticalDirection As PTVerticalDirection = PTHorizontalDirection.StopMove,
+                           Optional horizontalSpeed As Int16 = 1,
                            Optional verticalSpeed As Int16 = 1) As Byte()
 
         If horizontalSpeed > PAN_MAX_SPEED Then
@@ -241,6 +244,21 @@
             verticalDirection,
             TERMINATOR
         }
+    End Function
+
+    Public Function PTMoveAbsolute(horizontalPosition As Int16,
+                                   verticalPosition As Int16,
+                                   Optional horizontalSpeed As Int16 = 1,
+                                   Optional verticalSpeed As Int16 = 1) As Byte()
+
+        If horizontalSpeed > PAN_MAX_SPEED Then
+            horizontalSpeed = PAN_MAX_SPEED
+        End If
+        If verticalSpeed > TILT_MAX_SPEED Then
+            verticalSpeed = TILT_MAX_SPEED
+        End If
+
+
     End Function
 
     Function ZoomStop()
@@ -301,6 +319,25 @@
         Return parseInt16FromResponse(
             {response(2), response(3), response(4), response(5)}
             )
+    End Function
+
+    Public Function parsePositionFromInt16(pos As Int16) As Byte()
+        Dim convTemp(1) As Byte
+        convTemp(0) = BitConverter.GetBytes(pos)(0)
+        convTemp(1) = BitConverter.GetBytes(pos)(1)
+
+        If (BitConverter.IsLittleEndian) Then
+            Array.Reverse(convTemp)
+        End If
+
+        Dim result(3) As Byte
+        result(0) = (convTemp(0) And &HF0) >> 4
+        result(1) = convTemp(0) And &HF
+        result(2) = (convTemp(1) And &HF0) >> 4
+        result(3) = convTemp(1) And &HF
+
+        Return result
+
     End Function
 
     Private Function parseInt16FromResponse(data As Byte()) As Int16

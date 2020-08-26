@@ -5,6 +5,10 @@
     Public port As String
     Public protocol As ProtocolType
 
+    Public panPosition As Int16
+    Public tiltPosition As Int16
+    Public zoomPosition As Int16
+
     Enum ProtocolType
         ViscaTCP = 1
     End Enum

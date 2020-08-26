@@ -209,7 +209,7 @@ Partial Class FrmCameraContol
         Me.statusBar.Items.AddRange(New System.Windows.Forms.ToolStripItem() {Me.statusPan, Me.statusTilt, Me.statusZoom})
         Me.statusBar.Location = New System.Drawing.Point(0, 297)
         Me.statusBar.Name = "statusBar"
-        Me.statusBar.Size = New System.Drawing.Size(350, 22)
+        Me.statusBar.Size = New System.Drawing.Size(349, 22)
         Me.statusBar.TabIndex = 13
         Me.statusBar.Text = "StatusStrip1"
         '
@@ -268,7 +268,7 @@ Partial Class FrmCameraContol
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(8.0!, 16.0!)
         Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
-        Me.ClientSize = New System.Drawing.Size(350, 319)
+        Me.ClientSize = New System.Drawing.Size(349, 319)
         Me.Controls.Add(Me.btZoomMinus)
         Me.Controls.Add(Me.btZoomPlus)
         Me.Controls.Add(Me.trkZoomSpeed)
