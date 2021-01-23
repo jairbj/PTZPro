@@ -392,6 +392,7 @@ Partial Class FrmCameraContol
         Me.Controls.Add(Me.pnPtz)
         Me.Controls.Add(Me.btConnectDisconnect)
         Me.Font = New System.Drawing.Font("Microsoft Sans Serif", 9.75!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+        Me.Icon = CType(resources.GetObject("$this.Icon"), System.Drawing.Icon)
         Me.MainMenuStrip = Me.MenuStrip1
         Me.Margin = New System.Windows.Forms.Padding(4)
         Me.Name = "FrmCameraContol"
