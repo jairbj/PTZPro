@@ -24,6 +24,8 @@ Public Class FrmCameraContol
             tcpClient = New System.Net.Sockets.TcpClient()
             tcpClient.Connect(camera.ip, camera.port)
             networkStream = tcpClient.GetStream()
+            ' Sets 500ms timeout
+            networkStream.ReadTimeout = 500
             btConnectDisconnect.Text = "Disconnect"
             lblStatus.Text = "Connected"
             tmrStatus.Start()
@@ -159,10 +161,15 @@ Public Class FrmCameraContol
         isUpdatingPosition = True
         If tcpClient.Connected Then
             Dim data = visca.InquirePanTiltPosition
-            networkStream.Write(data, 0, data.Length)
-
             Dim bytes(tcpClient.ReceiveBufferSize) As Byte
-            networkStream.Read(bytes, 0, CInt(tcpClient.ReceiveBufferSize))
+
+            Try
+                networkStream.Write(data, 0, data.Length)
+                networkStream.Read(bytes, 0, CInt(tcpClient.ReceiveBufferSize))
+            Catch ioex As IO.IOException
+
+            End Try
+
 
             Dim response As Byte() = visca.getResponse(bytes, 11)
             If Not response Is Nothing Then
@@ -172,8 +179,13 @@ Public Class FrmCameraContol
             End If
 
             data = visca.InquireZoomPosition
-            networkStream.Write(data, 0, data.Length)
-            networkStream.Read(bytes, 0, CInt(tcpClient.ReceiveBufferSize))
+            Try
+                networkStream.Write(data, 0, data.Length)
+                networkStream.Read(bytes, 0, CInt(tcpClient.ReceiveBufferSize))
+            Catch ioex As IO.IOException
+
+            End Try
+
 
             response = visca.getResponse(bytes, 7)
             If Not response Is Nothing Then
