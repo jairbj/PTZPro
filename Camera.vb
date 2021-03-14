@@ -15,6 +15,9 @@ Public Class Camera
     Public tiltPosition As Int16
     Public zoomPosition As Int16
 
+    Public focusModeAuto As Boolean
+    Public focusPosition As Int16
+
     Public userPTSpeed As Integer = Visca.PAN_MIN_SPEED
     Public userZoomSpeed As Integer = Visca.ZOOM_MIN_SPEED
 

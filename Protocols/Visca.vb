@@ -40,6 +40,10 @@
     Private Const FOCUS_FAR_SPEED As Byte = &H20
     Private Const FOCUS_NEAR_SPEED As Byte = &H30
     Private Const FOCUS_VALUE As Byte = &H48
+    Private Const FOCUS_MODE_INQ As Byte = &H38
+    Private Const FOCUS_MODE_AUTO As Byte = &H2
+    Private Const FOCUS_MODE_MANUAL As Byte = &H3
+    Private Const FOCUS_MODE_TOGGLE As Byte = &H10
     Private Const FOCUS_AUTO As Byte = &H38
     Private Const FOCUS_AUTO_MAN As Byte = &H10
     Private Const FOCUS_ONE_PUSH As Byte = &H18
@@ -190,6 +194,11 @@
         Minus = ZOOM_WIDE_SPEED
     End Enum
 
+    Public Enum FocusMode
+        Auto = FOCUS_MODE_AUTO
+        Manual = FOCUS_MODE_MANUAL
+    End Enum
+
     Private cameraNumber As Int16
     Private cameraHeader As Byte
 
@@ -215,6 +224,25 @@
             INQUIRY,
             CATEGORY_PAN_TILTER,
             PT_POSITION_INQ,
+            TERMINATOR
+        }
+    End Function
+
+    Public Function InquireFocusMode() As Byte()
+        Return New Byte() {
+            cameraHeader,
+            INQUIRY,
+            CATEGORY_CAMERA1,
+            FOCUS_MODE_INQ,
+            TERMINATOR
+        }
+    End Function
+    Public Function InquireFocusPos() As Byte()
+        Return New Byte() {
+            cameraHeader,
+            INQUIRY,
+            CATEGORY_CAMERA1,
+            FOCUS_VALUE,
             TERMINATOR
         }
     End Function
@@ -318,6 +346,17 @@
         }
     End Function
 
+    Function FocusSetMode(mode As FocusMode)
+        Return New Byte() {
+            cameraHeader,
+            COMMAND,
+            CATEGORY_CAMERA1,
+            FOCUS_AUTO,
+            mode,
+            TERMINATOR
+        }
+    End Function
+
     Public Function getResponse(bytes As Byte(), expectedResponseSize As Integer) As Byte()
         Dim initialPos = 0
         For i As Integer = 0 To bytes.Length - 1
@@ -348,6 +387,12 @@
     End Function
 
     Public Function parseZoomPosition(response As Byte()) As Int16
+        Return parseInt16FromResponse(
+            {response(2), response(3), response(4), response(5)}
+            )
+    End Function
+
+    Public Function parseFocusPosition(response As Byte()) As Int16
         Return parseInt16FromResponse(
             {response(2), response(3), response(4), response(5)}
             )
