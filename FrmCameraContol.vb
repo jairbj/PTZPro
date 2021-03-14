@@ -160,46 +160,58 @@ Public Class FrmCameraContol
         End If
         isUpdatingPosition = True
         If tcpClient.Connected Then
-            Dim data = visca.InquirePanTiltPosition
-            Dim bytes(tcpClient.ReceiveBufferSize) As Byte
-
-            Try
-                networkStream.Write(data, 0, data.Length)
-                networkStream.Read(bytes, 0, CInt(tcpClient.ReceiveBufferSize))
-            Catch ioex As IO.IOException
-
-            End Try
-
-
-            Dim response As Byte() = visca.getResponse(bytes, 11)
+            Dim response = inquireData(visca.InquirePanTiltPosition, 11)
             If Not response Is Nothing Then
                 camera.panPosition = visca.parsePanPosition(response)
                 camera.tiltPosition = visca.parseTiltPosition(response)
                 'Debug.WriteLine(BitConverter.ToString(response))
             End If
 
-            data = visca.InquireZoomPosition
-            Try
-                networkStream.Write(data, 0, data.Length)
-                networkStream.Read(bytes, 0, CInt(tcpClient.ReceiveBufferSize))
-            Catch ioex As IO.IOException
-
-            End Try
-
-
-            response = visca.getResponse(bytes, 7)
+            response = inquireData(visca.InquireZoomPosition, 7)
             If Not response Is Nothing Then
                 'Debug.WriteLine(BitConverter.ToString(response).Replace("-", ""))
                 camera.zoomPosition = visca.parseZoomPosition(response)
             End If
 
+            response = inquireData(visca.InquireFocusMode, 4)
+            If Not response Is Nothing Then
+                If response(2) = Visca.FocusMode.Auto Then
+                    camera.focusModeAuto = True
+                Else
+                    camera.focusModeAuto = False
+                End If
+            End If
+
+            response = inquireData(visca.InquireFocusPos, 7)
+            If Not response Is Nothing Then
+                camera.focusPosition = visca.parseFocusPosition(response)
+            End If
 
             statusPan.Text = "P:" & camera.panPosition
             statusTilt.Text = "T:" & camera.tiltPosition
             statusZoom.Text = "Z:" & camera.zoomPosition
+            statusFocus.Text = "F:" & camera.focusPosition
+            If camera.focusModeAuto Then
+                statusFocus.Text = statusFocus.Text & " (Auto)"
+            Else
+                statusFocus.Text = statusFocus.Text & " (Manual)"
+            End If
+
         End If
         isUpdatingPosition = False
     End Sub
+
+    Private Function inquireData(data As Byte(), responseSize As Integer) As Byte()
+
+        Dim bytes(tcpClient.ReceiveBufferSize) As Byte
+        Try
+            networkStream.Write(data, 0, data.Length)
+            networkStream.Read(bytes, 0, CInt(tcpClient.ReceiveBufferSize))
+        Catch ioex As IO.IOException
+
+        End Try
+        Return visca.getResponse(bytes, responseSize)
+    End Function
 
     Private Sub trkPTSpeed_ValueChanged(sender As Object, e As EventArgs) Handles trkPTSpeed.ValueChanged
         camera.userPTSpeed = trkPTSpeed.Value

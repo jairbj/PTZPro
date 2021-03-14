@@ -57,6 +57,7 @@ Partial Class FrmCameraContol
         Me.Label3 = New System.Windows.Forms.Label()
         Me.MenuStrip1 = New System.Windows.Forms.MenuStrip()
         Me.AboutToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
+        Me.statusFocus = New System.Windows.Forms.ToolStripStatusLabel()
         Me.pnPtz.SuspendLayout()
         CType(Me.trkPTSpeed, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.statusBar.SuspendLayout()
@@ -231,7 +232,7 @@ Partial Class FrmCameraContol
         '
         'statusBar
         '
-        Me.statusBar.Items.AddRange(New System.Windows.Forms.ToolStripItem() {Me.statusPan, Me.statusTilt, Me.statusZoom})
+        Me.statusBar.Items.AddRange(New System.Windows.Forms.ToolStripItem() {Me.statusPan, Me.statusTilt, Me.statusZoom, Me.statusFocus})
         Me.statusBar.Location = New System.Drawing.Point(0, 457)
         Me.statusBar.Name = "statusBar"
         Me.statusBar.Size = New System.Drawing.Size(349, 22)
@@ -372,6 +373,12 @@ Partial Class FrmCameraContol
         Me.AboutToolStripMenuItem.Size = New System.Drawing.Size(52, 20)
         Me.AboutToolStripMenuItem.Text = "About"
         '
+        'statusFocus
+        '
+        Me.statusFocus.Name = "statusFocus"
+        Me.statusFocus.Size = New System.Drawing.Size(13, 17)
+        Me.statusFocus.Text = "F"
+        '
         'FrmCameraContol
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(8.0!, 16.0!)
@@ -443,4 +450,5 @@ Partial Class FrmCameraContol
     Friend WithEvents Label3 As Label
     Friend WithEvents MenuStrip1 As MenuStrip
     Friend WithEvents AboutToolStripMenuItem As ToolStripMenuItem
+    Friend WithEvents statusFocus As ToolStripStatusLabel
 End Class
