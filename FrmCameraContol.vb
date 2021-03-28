@@ -29,6 +29,7 @@ Public Class FrmCameraContol
             btConnectDisconnect.Text = "Disconnect"
             lblStatus.Text = "Connected"
             tmrStatus.Start()
+            focusAuto()
         Catch ex As Exception
             lblStatus.Text = "Error"
         End Try
@@ -94,6 +95,8 @@ Public Class FrmCameraContol
                 horizontalDirection = Visca.PTHorizontalDirection.Right
                 verticalDirection = Visca.PTVerticalDirection.Down
         End Select
+
+        focusAuto()
         'Debug.WriteLine(speed)
         Dim move = visca.PTMove(horizontalDirection, verticalDirection,
                                 speed, speed)
@@ -134,6 +137,7 @@ Public Class FrmCameraContol
                 direction = Visca.ZoomDirection.Minus
         End Select
 
+        focusAuto()
         Dim move = visca.ZoomMove(direction, speed)
         networkWriter(move)
     End Sub
@@ -270,6 +274,7 @@ Public Class FrmCameraContol
             speed = trkPTSpeed.Value
         End If
 
+        focusAuto()
         networkWriter(visca.PresetSpeed(speed))
         networkWriter(visca.GetPreset(preset.id))
     End Sub
@@ -328,7 +333,16 @@ Public Class FrmCameraContol
         LoadPresets()
     End Sub
 
+    Private Sub focusAuto(Optional setAuto As Boolean = True)
+        If setAuto Then
+            btChckFocusLock.Checked = False
+        Else
+            btChckFocusLock.Checked = True
+        End If
+    End Sub
+
     Private Sub btCenter_MouseDown(sender As Object, e As MouseEventArgs) Handles btCenter.MouseDown
+        focusAuto()
         If My.Computer.Keyboard.ShiftKeyDown Then
             networkWriter(visca.PTHome)
         Else
@@ -338,5 +352,17 @@ Public Class FrmCameraContol
 
     Private Sub AboutToolStripMenuItem_Click(sender As Object, e As EventArgs) Handles AboutToolStripMenuItem.Click
         frmAbout.ShowDialog()
+    End Sub
+
+    Private Sub btChckFocusLock_CheckedChanged(sender As Object, e As EventArgs) Handles btChckFocusLock.CheckedChanged
+        If btChckFocusLock.Checked Then
+            ' Focus Locked
+            btChckFocusLock.Font = New Font(btChckFocusLock.Font.Name, btChckFocusLock.Font.Size, FontStyle.Bold)
+            networkWriter(visca.FocusSetMode(Visca.FocusMode.Manual))
+        Else
+            ' Focus Auto
+            btChckFocusLock.Font = New Font(btChckFocusLock.Font.Name, btChckFocusLock.Font.Size, FontStyle.Regular)
+            networkWriter(visca.FocusSetMode(Visca.FocusMode.Auto))
+        End If
     End Sub
 End Class
