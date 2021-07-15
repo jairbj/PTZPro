@@ -9,7 +9,7 @@ I made this program for controlling VISCA TCP PTZ cameras.
 Open an [issue](https://github.com/jairbj/PTZPro/issues)
 ## **Todo**
 - [ ] Help menu
-- [ ] Focus lock function
+- [x] Focus lock function
 - [ ] Integration with Vmix for showing when the camera is active
 ## **Credits**
 ### Icons:
