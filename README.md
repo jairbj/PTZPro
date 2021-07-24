@@ -10,7 +10,7 @@ Open an [issue](https://github.com/jairbj/PTZPro/issues)
 ## **Todo**
 - [ ] Help menu
 - [x] Focus lock function
-- [ ] Integration with Vmix for showing when the camera is active
+- [x] Integration with Vmix for showing when the camera is active
 ## **Credits**
 ### Icons:
 https://iconarchive.com/artist/hopstarter.html
