@@ -41,6 +41,21 @@ Public Class FrmCameraConfig
             MsgBox("Please select your camera protocol")
             Return
         End If
+        If txbVmixUrl.Text = "" Then
+            numInputNumber.Value = 0
+            txbVmixUsername.Text = ""
+            txbVmixPassword.Text = ""
+        Else
+            Dim validatedUri As Uri = Nothing
+            If Not Uri.TryCreate(txbVmixUrl.Text, UriKind.Absolute, validatedUri) Then
+                MsgBox("Please fill a valid Vmix URL")
+                Return
+            End If
+            If numInputNumber.Value = 0 Then
+                MsgBox("Vmix input number cannot be zero")
+                Return
+            End If
+        End If
 
         If modeAdd Then
             createFile()
@@ -71,6 +86,10 @@ Public Class FrmCameraConfig
             Case "VISCA TCP"
                 camera.protocol = Camera.ProtocolType.ViscaTCP
         End Select
+        camera.vmixApiUrl = txbVmixUrl.Text
+        camera.vmixInputNumber = numInputNumber.Value
+        camera.vmixUsername = txbVmixUsername.Text
+        camera.vmixPassword = txbVmixPassword.Text
 
         camera.SaveSettings()
     End Sub
@@ -83,5 +102,14 @@ Public Class FrmCameraConfig
         If camera.protocol = Camera.ProtocolType.ViscaTCP Then
             cmbProtocol.Text = "VISCA TCP"
         End If
+        txbVmixUrl.Text = camera.vmixApiUrl
+        numInputNumber.Value = camera.vmixInputNumber
+        txbVmixUsername.Text = camera.vmixUsername
+        txbVmixPassword.Text = camera.vmixPassword
+
+    End Sub
+
+    Private Sub FrmCameraConfig_Load(sender As Object, e As EventArgs) Handles MyBase.Load
+
     End Sub
 End Class

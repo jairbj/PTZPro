@@ -21,6 +21,12 @@ Public Class Camera
     Public userPTSpeed As Integer = Visca.PAN_MIN_SPEED
     Public userZoomSpeed As Integer = Visca.ZOOM_MIN_SPEED
 
+    Public vmixEnabled As Boolean = False
+    Public vmixApiUrl As String
+    Public vmixInputNumber As Int16 = 0
+    Public vmixUsername As String
+    Public vmixPassword As String
+
     Public presets(MAX_PRESETS) As CameraPreset
 
 
@@ -42,6 +48,15 @@ Public Class Camera
         port = cameraSection.GetKey("Port", "").GetValue
         protocol = cameraSection.GetKey("Protocol", ProtocolType.ViscaTCP).GetValue
 
+        Dim vmixSection = ini.GetOrAddSection("VMIX")
+        vmixApiUrl = vmixSection.GetKey("VmixApiUrl", "").GetValue
+        vmixInputNumber = vmixSection.GetKey("VmixInputNumber", 0).GetValue
+        vmixUsername = vmixSection.GetKey("VmixUsername", "").GetValue
+        vmixPassword = vmixSection.GetKey("VmixPassword", "").GetValue
+        If vmixApiUrl <> "" Then
+            vmixEnabled = True
+        End If
+
         Dim userConfSection = ini.GetOrAddSection("USER_CONF")
         userPTSpeed = userConfSection.GetKey("PTSpeed", Visca.PAN_MIN_SPEED).Value()
         userZoomSpeed = userConfSection.GetKey("ZoomSpeed", Visca.ZOOM_MIN_SPEED).Value()
@@ -55,6 +70,12 @@ Public Class Camera
         cameraSection.AddKey("IP").Value = ip
         cameraSection.AddKey("Port").Value = port
         cameraSection.AddKey("Protocol").Value = protocol
+
+        Dim vmixSection = ini.GetOrAddSection("VMIX")
+        vmixSection.AddKey("VmixApiUrl").Value = vmixApiUrl
+        vmixSection.AddKey("VmixInputNumber").Value = vmixInputNumber
+        vmixSection.AddKey("VmixUsername").Value = vmixUsername
+        vmixSection.AddKey("VmixPassword").Value = vmixPassword
 
         Dim userConfSection = ini.AddSection("USER_CONF")
         userConfSection.AddKey("PTSpeed").Value = userPTSpeed

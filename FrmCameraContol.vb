@@ -1,13 +1,22 @@
 ﻿
 Imports System.Net.Sockets
 Imports System.Text
+Imports System.Xml
+
 Public Class FrmCameraContol
     Dim tcpClient As System.Net.Sockets.TcpClient
     Dim networkStream As NetworkStream
     Dim visca As Visca = New Visca(1)
     Dim camera As Camera
+    Dim vmixWebClient As New Net.WebClient()
 
     Dim isUpdatingPosition As Boolean = False
+
+    Private Enum CameraStatus
+        None = 0
+        Preview = 1
+        Active = 2
+    End Enum
 
     Public Sub New(camera As Camera)
         ' This call is required by the designer.
@@ -15,7 +24,10 @@ Public Class FrmCameraContol
 
         ' Add any initialization after the InitializeComponent() call.
         Me.camera = camera
+        AddHandler vmixWebClient.DownloadStringCompleted, AddressOf CheckVmixActivePreview
+
         tcpConnect()
+        tmrStatus.Start()
     End Sub
 
     Private Sub tcpConnect()
@@ -28,7 +40,6 @@ Public Class FrmCameraContol
             networkStream.ReadTimeout = 500
             btConnectDisconnect.Text = "Disconnect"
             lblStatus.Text = "Connected"
-            tmrStatus.Start()
             focusAuto()
         Catch ex As Exception
             lblStatus.Text = "Error"
@@ -37,7 +48,6 @@ Public Class FrmCameraContol
     End Sub
 
     Private Sub tcpDisconnect()
-        tmrStatus.Stop()
         btConnectDisconnect.Enabled = False
         If tcpClient.Connected Then
             networkStream.Close()
@@ -155,7 +165,73 @@ Public Class FrmCameraContol
     End Sub
 
     Private Sub tmrStatus_Tick(sender As Object, e As EventArgs) Handles tmrStatus.Tick
-        UpdatePosition()
+        If tcpClient IsNot Nothing Then
+            UpdatePosition()
+        End If
+        If camera.vmixEnabled Then
+            UpdateVmix()
+        End If
+    End Sub
+
+    Private Sub UpdateVmix()
+        Try
+            If vmixWebClient.IsBusy Then
+                Return
+            End If
+
+            vmixWebClient.Credentials = New Net.NetworkCredential(camera.vmixUsername, camera.vmixPassword)
+            vmixWebClient.DownloadStringAsync(New Uri(camera.vmixApiUrl + "/api"))
+        Catch ex As Exception
+            Debug.WriteLine(ex)
+        End Try
+    End Sub
+
+    Private Sub CheckVmixActivePreview _
+        (ByVal sender As Object,
+         ByVal e As Net.DownloadStringCompletedEventArgs)
+        Try
+            If e.Error IsNot Nothing Then
+                SetCameraStatusColor(CameraStatus.None)
+                Return
+            End If
+            Dim xmlResponse As String = e.Result
+
+            If xmlResponse = "" Then
+                Return
+            End If
+            Dim xmlDoc As New XmlDocument()
+            xmlDoc.LoadXml(xmlResponse)
+            Dim preview = xmlDoc.DocumentElement.SelectNodes("/vmix/preview").Item(0).InnerText
+            Dim active = xmlDoc.DocumentElement.SelectNodes("/vmix/active").Item(0).InnerText
+
+            If camera.vmixInputNumber = active Then
+                SetCameraStatusColor(CameraStatus.Active)
+            ElseIf camera.vmixInputNumber = preview Then
+                SetCameraStatusColor(CameraStatus.Preview)
+            Else
+                SetCameraStatusColor(CameraStatus.None)
+            End If
+        Catch ex As Exception
+            Debug.WriteLine(ex)
+            SetCameraStatusColor(CameraStatus.None)
+        End Try
+    End Sub
+
+    Private Sub SetCameraStatusColor(cameraStatus As CameraStatus)
+        Select Case cameraStatus
+            Case CameraStatus.None
+                lblCameraTitle.BackColor = Color.Transparent
+                lblCameraTitle.ForeColor = Color.Black
+            Case CameraStatus.Preview
+                lblCameraTitle.BackColor = Color.Orange
+                lblCameraTitle.ForeColor = Color.White
+            Case CameraStatus.Active
+                lblCameraTitle.BackColor = Color.Green
+                lblCameraTitle.ForeColor = Color.White
+        End Select
+
+        lblCamera.BackColor = lblCameraTitle.BackColor
+        lblCamera.ForeColor = lblCameraTitle.ForeColor
     End Sub
 
     Private Sub UpdatePosition()

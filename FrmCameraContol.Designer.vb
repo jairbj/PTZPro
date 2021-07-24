@@ -55,7 +55,7 @@ Partial Class FrmCameraContol
         Me.DeletePresetToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
         Me.lstvPresets = New System.Windows.Forms.ListView()
         Me.lblCamera = New System.Windows.Forms.Label()
-        Me.Label3 = New System.Windows.Forms.Label()
+        Me.lblCameraTitle = New System.Windows.Forms.Label()
         Me.mainMenu = New System.Windows.Forms.MenuStrip()
         Me.AboutToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
         Me.btChckFocusLock = New System.Windows.Forms.CheckBox()
@@ -91,7 +91,6 @@ Partial Class FrmCameraContol
         '
         'pnPtz
         '
-        resources.ApplyResources(Me.pnPtz, "pnPtz")
         Me.pnPtz.Controls.Add(Me.btCenter)
         Me.pnPtz.Controls.Add(Me.btDownRight)
         Me.pnPtz.Controls.Add(Me.btDown)
@@ -101,6 +100,7 @@ Partial Class FrmCameraContol
         Me.pnPtz.Controls.Add(Me.btUpRight)
         Me.pnPtz.Controls.Add(Me.btUpLeft)
         Me.pnPtz.Controls.Add(Me.btUp)
+        resources.ApplyResources(Me.pnPtz, "pnPtz")
         Me.pnPtz.Name = "pnPtz"
         '
         'btCenter
@@ -186,29 +186,29 @@ Partial Class FrmCameraContol
         '
         'statusBar
         '
-        resources.ApplyResources(Me.statusBar, "statusBar")
         Me.statusBar.Items.AddRange(New System.Windows.Forms.ToolStripItem() {Me.statusPan, Me.statusTilt, Me.statusZoom, Me.statusFocus})
+        resources.ApplyResources(Me.statusBar, "statusBar")
         Me.statusBar.Name = "statusBar"
         '
         'statusPan
         '
-        resources.ApplyResources(Me.statusPan, "statusPan")
         Me.statusPan.Name = "statusPan"
+        resources.ApplyResources(Me.statusPan, "statusPan")
         '
         'statusTilt
         '
-        resources.ApplyResources(Me.statusTilt, "statusTilt")
         Me.statusTilt.Name = "statusTilt"
+        resources.ApplyResources(Me.statusTilt, "statusTilt")
         '
         'statusZoom
         '
-        resources.ApplyResources(Me.statusZoom, "statusZoom")
         Me.statusZoom.Name = "statusZoom"
+        resources.ApplyResources(Me.statusZoom, "statusZoom")
         '
         'statusFocus
         '
-        resources.ApplyResources(Me.statusFocus, "statusFocus")
         Me.statusFocus.Name = "statusFocus"
+        resources.ApplyResources(Me.statusFocus, "statusFocus")
         '
         'trkZoomSpeed
         '
@@ -242,24 +242,24 @@ Partial Class FrmCameraContol
         '
         'ctxMenuPresets
         '
-        resources.ApplyResources(Me.ctxMenuPresets, "ctxMenuPresets")
         Me.ctxMenuPresets.Items.AddRange(New System.Windows.Forms.ToolStripItem() {Me.EditPresetNameToolStripMenuItem, Me.UpdatePresetToolStripMenuItem, Me.DeletePresetToolStripMenuItem})
         Me.ctxMenuPresets.Name = "ctxMenuPresets"
+        resources.ApplyResources(Me.ctxMenuPresets, "ctxMenuPresets")
         '
         'EditPresetNameToolStripMenuItem
         '
-        resources.ApplyResources(Me.EditPresetNameToolStripMenuItem, "EditPresetNameToolStripMenuItem")
         Me.EditPresetNameToolStripMenuItem.Name = "EditPresetNameToolStripMenuItem"
+        resources.ApplyResources(Me.EditPresetNameToolStripMenuItem, "EditPresetNameToolStripMenuItem")
         '
         'UpdatePresetToolStripMenuItem
         '
-        resources.ApplyResources(Me.UpdatePresetToolStripMenuItem, "UpdatePresetToolStripMenuItem")
         Me.UpdatePresetToolStripMenuItem.Name = "UpdatePresetToolStripMenuItem"
+        resources.ApplyResources(Me.UpdatePresetToolStripMenuItem, "UpdatePresetToolStripMenuItem")
         '
         'DeletePresetToolStripMenuItem
         '
-        resources.ApplyResources(Me.DeletePresetToolStripMenuItem, "DeletePresetToolStripMenuItem")
         Me.DeletePresetToolStripMenuItem.Name = "DeletePresetToolStripMenuItem"
+        resources.ApplyResources(Me.DeletePresetToolStripMenuItem, "DeletePresetToolStripMenuItem")
         '
         'lstvPresets
         '
@@ -276,21 +276,21 @@ Partial Class FrmCameraContol
         resources.ApplyResources(Me.lblCamera, "lblCamera")
         Me.lblCamera.Name = "lblCamera"
         '
-        'Label3
+        'lblCameraTitle
         '
-        resources.ApplyResources(Me.Label3, "Label3")
-        Me.Label3.Name = "Label3"
+        resources.ApplyResources(Me.lblCameraTitle, "lblCameraTitle")
+        Me.lblCameraTitle.Name = "lblCameraTitle"
         '
         'mainMenu
         '
-        resources.ApplyResources(Me.mainMenu, "mainMenu")
         Me.mainMenu.Items.AddRange(New System.Windows.Forms.ToolStripItem() {Me.AboutToolStripMenuItem})
+        resources.ApplyResources(Me.mainMenu, "mainMenu")
         Me.mainMenu.Name = "mainMenu"
         '
         'AboutToolStripMenuItem
         '
-        resources.ApplyResources(Me.AboutToolStripMenuItem, "AboutToolStripMenuItem")
         Me.AboutToolStripMenuItem.Name = "AboutToolStripMenuItem"
+        resources.ApplyResources(Me.AboutToolStripMenuItem, "AboutToolStripMenuItem")
         '
         'btChckFocusLock
         '
@@ -304,7 +304,7 @@ Partial Class FrmCameraContol
         Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
         Me.Controls.Add(Me.btChckFocusLock)
         Me.Controls.Add(Me.lblCamera)
-        Me.Controls.Add(Me.Label3)
+        Me.Controls.Add(Me.lblCameraTitle)
         Me.Controls.Add(Me.lstvPresets)
         Me.Controls.Add(Me.btSavePreset)
         Me.Controls.Add(Me.btZoomMinus)
@@ -362,7 +362,7 @@ Partial Class FrmCameraContol
     Friend WithEvents EditPresetNameToolStripMenuItem As ToolStripMenuItem
     Friend WithEvents btCenter As Button
     Friend WithEvents lblCamera As Label
-    Friend WithEvents Label3 As Label
+    Friend WithEvents lblCameraTitle As Label
     Friend WithEvents mainMenu As MenuStrip
     Friend WithEvents AboutToolStripMenuItem As ToolStripMenuItem
     Friend WithEvents statusFocus As ToolStripStatusLabel
