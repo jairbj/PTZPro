@@ -85,6 +85,8 @@ Public Class FrmCameraConfig
         Select Case cmbProtocol.Text
             Case "VISCA TCP"
                 camera.protocol = Camera.ProtocolType.ViscaTCP
+            Case "ONVIF"
+                camera.protocol = Camera.ProtocolType.Onvif
         End Select
         camera.vmixApiUrl = txbVmixUrl.Text
         camera.vmixInputNumber = numInputNumber.Value
@@ -99,9 +101,13 @@ Public Class FrmCameraConfig
         txbName.Text = camera.name
         txbIP.Text = camera.ip
         txbPort.Text = camera.port
-        If camera.protocol = Camera.ProtocolType.ViscaTCP Then
-            cmbProtocol.Text = "VISCA TCP"
-        End If
+        Select Case camera.protocol
+            Case Camera.ProtocolType.ViscaTCP
+                cmbProtocol.Text = "VISCA TCP"
+            Case Camera.ProtocolType.Onvif
+                cmbProtocol.Text = "ONVIF"
+        End Select
+
         txbVmixUrl.Text = camera.vmixApiUrl
         numInputNumber.Value = camera.vmixInputNumber
         txbVmixUsername.Text = camera.vmixUsername

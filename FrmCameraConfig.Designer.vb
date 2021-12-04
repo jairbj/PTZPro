@@ -32,14 +32,14 @@ Partial Class FrmCameraConfig
         Me.cmbProtocol = New System.Windows.Forms.ComboBox()
         Me.btSave = New System.Windows.Forms.Button()
         Me.GroupBox1 = New System.Windows.Forms.GroupBox()
-        Me.txbVmixUrl = New System.Windows.Forms.TextBox()
-        Me.Label5 = New System.Windows.Forms.Label()
-        Me.Label6 = New System.Windows.Forms.Label()
-        Me.txbVmixUsername = New System.Windows.Forms.TextBox()
-        Me.Label7 = New System.Windows.Forms.Label()
+        Me.numInputNumber = New System.Windows.Forms.NumericUpDown()
         Me.txbVmixPassword = New System.Windows.Forms.TextBox()
         Me.Label8 = New System.Windows.Forms.Label()
-        Me.numInputNumber = New System.Windows.Forms.NumericUpDown()
+        Me.txbVmixUsername = New System.Windows.Forms.TextBox()
+        Me.Label7 = New System.Windows.Forms.Label()
+        Me.Label6 = New System.Windows.Forms.Label()
+        Me.txbVmixUrl = New System.Windows.Forms.TextBox()
+        Me.Label5 = New System.Windows.Forms.Label()
         Me.GroupBox1.SuspendLayout()
         CType(Me.numInputNumber, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.SuspendLayout()
@@ -117,7 +117,7 @@ Partial Class FrmCameraConfig
             Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
         Me.cmbProtocol.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList
         Me.cmbProtocol.FormattingEnabled = True
-        Me.cmbProtocol.Items.AddRange(New Object() {"VISCA TCP"})
+        Me.cmbProtocol.Items.AddRange(New Object() {"VISCA TCP", "ONVIF"})
         Me.cmbProtocol.Location = New System.Drawing.Point(100, 94)
         Me.cmbProtocol.Name = "cmbProtocol"
         Me.cmbProtocol.Size = New System.Drawing.Size(379, 24)
@@ -154,52 +154,15 @@ Partial Class FrmCameraConfig
         Me.GroupBox1.TabStop = False
         Me.GroupBox1.Text = "Vmix Integration (leave blank for deactivate)"
         '
-        'txbVmixUrl
+        'numInputNumber
         '
-        Me.txbVmixUrl.Anchor = CType((((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Bottom) _
+        Me.numInputNumber.Anchor = CType((((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Bottom) _
             Or System.Windows.Forms.AnchorStyles.Left) _
             Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
-        Me.txbVmixUrl.Location = New System.Drawing.Point(167, 21)
-        Me.txbVmixUrl.Name = "txbVmixUrl"
-        Me.txbVmixUrl.Size = New System.Drawing.Size(277, 22)
-        Me.txbVmixUrl.TabIndex = 0
-        '
-        'Label5
-        '
-        Me.Label5.AutoSize = True
-        Me.Label5.Location = New System.Drawing.Point(10, 24)
-        Me.Label5.Name = "Label5"
-        Me.Label5.Size = New System.Drawing.Size(127, 16)
-        Me.Label5.TabIndex = 5
-        Me.Label5.Text = "Web Controller URL"
-        '
-        'Label6
-        '
-        Me.Label6.AutoSize = True
-        Me.Label6.Location = New System.Drawing.Point(13, 53)
-        Me.Label6.Name = "Label6"
-        Me.Label6.Size = New System.Drawing.Size(87, 16)
-        Me.Label6.TabIndex = 6
-        Me.Label6.Text = "Input Number"
-        '
-        'txbVmixUsername
-        '
-        Me.txbVmixUsername.Anchor = CType((((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Bottom) _
-            Or System.Windows.Forms.AnchorStyles.Left) _
-            Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
-        Me.txbVmixUsername.Location = New System.Drawing.Point(167, 80)
-        Me.txbVmixUsername.Name = "txbVmixUsername"
-        Me.txbVmixUsername.Size = New System.Drawing.Size(277, 22)
-        Me.txbVmixUsername.TabIndex = 2
-        '
-        'Label7
-        '
-        Me.Label7.AutoSize = True
-        Me.Label7.Location = New System.Drawing.Point(13, 83)
-        Me.Label7.Name = "Label7"
-        Me.Label7.Size = New System.Drawing.Size(138, 16)
-        Me.Label7.TabIndex = 14
-        Me.Label7.Text = "Username (if needed)"
+        Me.numInputNumber.Location = New System.Drawing.Point(167, 49)
+        Me.numInputNumber.Name = "numInputNumber"
+        Me.numInputNumber.Size = New System.Drawing.Size(139, 22)
+        Me.numInputNumber.TabIndex = 1
         '
         'txbVmixPassword
         '
@@ -221,15 +184,52 @@ Partial Class FrmCameraConfig
         Me.Label8.TabIndex = 16
         Me.Label8.Text = "Password (if needed)"
         '
-        'numInputNumber
+        'txbVmixUsername
         '
-        Me.numInputNumber.Anchor = CType((((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Bottom) _
+        Me.txbVmixUsername.Anchor = CType((((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Bottom) _
             Or System.Windows.Forms.AnchorStyles.Left) _
             Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
-        Me.numInputNumber.Location = New System.Drawing.Point(167, 49)
-        Me.numInputNumber.Name = "numInputNumber"
-        Me.numInputNumber.Size = New System.Drawing.Size(139, 22)
-        Me.numInputNumber.TabIndex = 1
+        Me.txbVmixUsername.Location = New System.Drawing.Point(167, 80)
+        Me.txbVmixUsername.Name = "txbVmixUsername"
+        Me.txbVmixUsername.Size = New System.Drawing.Size(277, 22)
+        Me.txbVmixUsername.TabIndex = 2
+        '
+        'Label7
+        '
+        Me.Label7.AutoSize = True
+        Me.Label7.Location = New System.Drawing.Point(13, 83)
+        Me.Label7.Name = "Label7"
+        Me.Label7.Size = New System.Drawing.Size(138, 16)
+        Me.Label7.TabIndex = 14
+        Me.Label7.Text = "Username (if needed)"
+        '
+        'Label6
+        '
+        Me.Label6.AutoSize = True
+        Me.Label6.Location = New System.Drawing.Point(13, 53)
+        Me.Label6.Name = "Label6"
+        Me.Label6.Size = New System.Drawing.Size(87, 16)
+        Me.Label6.TabIndex = 6
+        Me.Label6.Text = "Input Number"
+        '
+        'txbVmixUrl
+        '
+        Me.txbVmixUrl.Anchor = CType((((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Bottom) _
+            Or System.Windows.Forms.AnchorStyles.Left) _
+            Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
+        Me.txbVmixUrl.Location = New System.Drawing.Point(167, 21)
+        Me.txbVmixUrl.Name = "txbVmixUrl"
+        Me.txbVmixUrl.Size = New System.Drawing.Size(277, 22)
+        Me.txbVmixUrl.TabIndex = 0
+        '
+        'Label5
+        '
+        Me.Label5.AutoSize = True
+        Me.Label5.Location = New System.Drawing.Point(10, 24)
+        Me.Label5.Name = "Label5"
+        Me.Label5.Size = New System.Drawing.Size(127, 16)
+        Me.Label5.TabIndex = 5
+        Me.Label5.Text = "Web Controller URL"
         '
         'FrmCameraConfig
         '

@@ -3,10 +3,11 @@ Imports System.Net.Sockets
 Imports System.Text
 Imports System.Xml
 
-Public Class FrmCameraContol
+Public Class FrmCameraControl
     Dim tcpClient As System.Net.Sockets.TcpClient
     Dim networkStream As NetworkStream
     Dim visca As Visca = New Visca(1)
+    Dim onvif As Onvif = Nothing
     Dim camera As Camera
     Dim vmixWebClient As New Net.WebClient()
 
@@ -26,43 +27,83 @@ Public Class FrmCameraContol
         Me.camera = camera
         AddHandler vmixWebClient.DownloadStringCompleted, AddressOf CheckVmixActivePreview
 
+        Select Case camera.protocol
+            Case Camera.ProtocolType.ViscaTCP
+                trkPTSpeed.Maximum = Visca.PAN_MAX_SPEED
+                trkZoomSpeed.Maximum = Visca.ZOOM_MAX_SPEED
+            Case Camera.ProtocolType.Onvif
+                trkPTSpeed.Maximum = Onvif.MAX_SPEED
+                trkZoomSpeed.Maximum = Onvif.MAX_SPEED
+                btChckFocusLock.Enabled = False
+        End Select
+
         tcpConnect()
         tmrStatus.Start()
     End Sub
 
     Private Sub tcpConnect()
         btConnectDisconnect.Enabled = False
-        Try
-            tcpClient = New System.Net.Sockets.TcpClient()
-            tcpClient.Connect(camera.ip, camera.port)
-            networkStream = tcpClient.GetStream()
-            ' Sets 500ms timeout
-            networkStream.ReadTimeout = 500
-            btConnectDisconnect.Text = "Disconnect"
-            lblStatus.Text = "Connected"
-            focusAuto()
-        Catch ex As Exception
-            lblStatus.Text = "Error"
-        End Try
-        btConnectDisconnect.Enabled = True
+        Select Case camera.protocol
+            Case Camera.ProtocolType.ViscaTCP
+                Try
+                    tcpClient = New System.Net.Sockets.TcpClient()
+                    tcpClient.Connect(camera.ip, camera.port)
+                    networkStream = tcpClient.GetStream()
+                    ' Sets 500ms timeout
+                    networkStream.ReadTimeout = 500
+                    focusAuto()
+                    btConnectDisconnect.Text = "Disconnect"
+                    lblStatus.Text = "Connected"
+                    btConnectDisconnect.Enabled = True
+                Catch ex As Exception
+                    lblStatus.Text = "Error"
+                End Try
+            Case Camera.ProtocolType.Onvif
+                onvif = New Onvif()
+                If onvif.Initialise(camera.ip, camera.port, "admin", "") Then
+                    btConnectDisconnect.Text = "Disconnect"
+                    lblStatus.Text = "Connected"
+                    btConnectDisconnect.Enabled = True
+                Else
+                    lblStatus.Text = onvif.ErrorMessage
+                End If
+        End Select
+
     End Sub
 
     Private Sub tcpDisconnect()
         btConnectDisconnect.Enabled = False
-        If tcpClient.Connected Then
-            networkStream.Close()
-            tcpClient.Close()
-        End If
+        Select Case camera.protocol
+            Case Camera.ProtocolType.ViscaTCP
+                If tcpClient.Connected Then
+                    networkStream.Close()
+                    tcpClient.Close()
+                End If
+            Case Camera.ProtocolType.Onvif
+                onvif = Nothing
+                onvif = New Onvif()
+        End Select
         lblStatus.Text = "Disconnected"
         btConnectDisconnect.Text = "Connect"
         btConnectDisconnect.Enabled = True
     End Sub
     Private Sub btConnectDisconnect_Click(sender As Object, e As EventArgs) Handles btConnectDisconnect.Click
-        If tcpClient.Connected Then
-            tcpDisconnect()
-        Else
-            tcpConnect()
-        End If
+
+        Select Case camera.protocol
+            Case Camera.ProtocolType.ViscaTCP
+                If tcpClient.Connected Then
+                    tcpDisconnect()
+                Else
+                    tcpConnect()
+                End If
+            Case Camera.ProtocolType.Onvif
+                If onvif.initialised Then
+                    tcpDisconnect()
+                Else
+                    tcpConnect()
+                End If
+        End Select
+
     End Sub
 
     Private Sub moveDirection(sender As Object, e As MouseEventArgs) Handles _
@@ -70,47 +111,83 @@ Public Class FrmCameraContol
             btUpLeft.MouseDown, btUpRight.MouseDown,
             btDownLeft.MouseDown, btDownRight.MouseDown
 
-        Dim horizontalDirection = Visca.PTHorizontalDirection.StopMove
-        Dim verticalDirection = Visca.PTVerticalDirection.StopMove
+        Select Case camera.protocol
+            Case Camera.ProtocolType.ViscaTCP
+                Dim horizontalDirection = Visca.PTHorizontalDirection.StopMove
+                Dim verticalDirection = Visca.PTVerticalDirection.StopMove
 
-        Dim speed As Int16
-        If My.Computer.Keyboard.ShiftKeyDown Then
-            speed = Visca.PAN_MAX_SPEED
-        ElseIf My.Computer.Keyboard.CtrlKeyDown Then
-            speed = Visca.PAN_MIN_SPEED
-        Else
-            speed = trkPTSpeed.Value
-        End If
+                Dim speed As Int16
+                If My.Computer.Keyboard.ShiftKeyDown Then
+                    speed = Visca.PAN_MAX_SPEED
+                ElseIf My.Computer.Keyboard.CtrlKeyDown Then
+                    speed = Visca.PAN_MIN_SPEED
+                Else
+                    speed = trkPTSpeed.Value
+                End If
 
 
-        Select Case True
-            Case sender Is btUp
-                verticalDirection = Visca.PTVerticalDirection.Up
-            Case sender Is btDown
-                verticalDirection = Visca.PTVerticalDirection.Down
-            Case sender Is btLeft
-                horizontalDirection = Visca.PTHorizontalDirection.Left
-            Case sender Is btRight
-                horizontalDirection = Visca.PTHorizontalDirection.Right
-            Case sender Is btUpLeft
-                horizontalDirection = Visca.PTHorizontalDirection.Left
-                verticalDirection = Visca.PTVerticalDirection.Up
-            Case sender Is btUpRight
-                horizontalDirection = Visca.PTHorizontalDirection.Right
-                verticalDirection = Visca.PTVerticalDirection.Up
-            Case sender Is btDownLeft
-                horizontalDirection = Visca.PTHorizontalDirection.Left
-                verticalDirection = Visca.PTVerticalDirection.Down
-            Case sender Is btDownRight
-                horizontalDirection = Visca.PTHorizontalDirection.Right
-                verticalDirection = Visca.PTVerticalDirection.Down
+                Select Case True
+                    Case sender Is btUp
+                        verticalDirection = Visca.PTVerticalDirection.Up
+                    Case sender Is btDown
+                        verticalDirection = Visca.PTVerticalDirection.Down
+                    Case sender Is btLeft
+                        horizontalDirection = Visca.PTHorizontalDirection.Left
+                    Case sender Is btRight
+                        horizontalDirection = Visca.PTHorizontalDirection.Right
+                    Case sender Is btUpLeft
+                        horizontalDirection = Visca.PTHorizontalDirection.Left
+                        verticalDirection = Visca.PTVerticalDirection.Up
+                    Case sender Is btUpRight
+                        horizontalDirection = Visca.PTHorizontalDirection.Right
+                        verticalDirection = Visca.PTVerticalDirection.Up
+                    Case sender Is btDownLeft
+                        horizontalDirection = Visca.PTHorizontalDirection.Left
+                        verticalDirection = Visca.PTVerticalDirection.Down
+                    Case sender Is btDownRight
+                        horizontalDirection = Visca.PTHorizontalDirection.Right
+                        verticalDirection = Visca.PTVerticalDirection.Down
+                End Select
+
+                focusAuto()
+                'Debug.WriteLine(speed)
+                Dim move = visca.PTMove(horizontalDirection, verticalDirection,
+                                speed, speed)
+                networkWriter(move)
+            Case Camera.ProtocolType.Onvif
+                If Not onvif.initialised Then
+                    Return
+                End If
+
+                Dim speed As Int16
+                If My.Computer.Keyboard.ShiftKeyDown Then
+                    speed = Onvif.MAX_SPEED
+                ElseIf My.Computer.Keyboard.CtrlKeyDown Then
+                    speed = Onvif.MIN_SPEED
+                Else
+                    speed = trkPTSpeed.Value
+                End If
+
+                Select Case True
+                    Case sender Is btUp
+                        onvif.Move(Onvif.MoveDirection.Up, speed)
+                    Case sender Is btDown
+                        onvif.Move(Onvif.MoveDirection.Down, speed)
+                    Case sender Is btLeft
+                        onvif.Move(Onvif.MoveDirection.Left, speed)
+                    Case sender Is btRight
+                        onvif.Move(Onvif.MoveDirection.Right, speed)
+                    Case sender Is btUpLeft
+                        onvif.Move(Onvif.MoveDirection.UpLeft, speed)
+                    Case sender Is btUpRight
+                        onvif.Move(Onvif.MoveDirection.UpRight, speed)
+                    Case sender Is btDownLeft
+                        onvif.Move(Onvif.MoveDirection.DownLeft, speed)
+                    Case sender Is btDownRight
+                        onvif.Move(Onvif.MoveDirection.DownRight, speed)
+                End Select
         End Select
 
-        focusAuto()
-        'Debug.WriteLine(speed)
-        Dim move = visca.PTMove(horizontalDirection, verticalDirection,
-                                speed, speed)
-        networkWriter(move)
     End Sub
 
 
@@ -119,7 +196,13 @@ Public Class FrmCameraContol
             btUpLeft.MouseUp, btUpRight.MouseUp,
             btDownLeft.MouseUp, btDownRight.MouseUp
 
-        networkWriter(visca.PTStop)
+        Select Case camera.protocol
+            Case Camera.ProtocolType.ViscaTCP
+                networkWriter(visca.PTStop)
+            Case Camera.ProtocolType.Onvif
+                onvif.StopMotion()
+        End Select
+
     End Sub
 
     Private Sub FrmCameraContol_FormClosed(sender As Object, e As FormClosedEventArgs) Handles MyBase.FormClosed
@@ -130,32 +213,59 @@ Public Class FrmCameraContol
     Private Sub zoomMove(sender As Object, e As MouseEventArgs) Handles _
         btZoomPlus.MouseDown, btZoomMinus.MouseDown
 
-        Dim direction As Visca.ZoomDirection
-        Dim speed As Int16
-        If My.Computer.Keyboard.ShiftKeyDown Then
-            speed = Visca.ZOOM_MAX_SPEED
-        ElseIf My.Computer.Keyboard.CtrlKeyDown Then
-            speed = Visca.ZOOM_MIN_SPEED
-        Else
-            speed = trkZoomSpeed.Value
-        End If
+        Select Case camera.protocol
+            Case Camera.ProtocolType.ViscaTCP
+                Dim direction As Visca.ZoomDirection
+                Dim speed As Int16
+                If My.Computer.Keyboard.ShiftKeyDown Then
+                    speed = Visca.ZOOM_MAX_SPEED
+                ElseIf My.Computer.Keyboard.CtrlKeyDown Then
+                    speed = Visca.ZOOM_MIN_SPEED
+                Else
+                    speed = trkZoomSpeed.Value
+                End If
 
-        Select Case True
-            Case sender Is btZoomPlus
-                direction = Visca.ZoomDirection.Plus
-            Case sender Is btZoomMinus
-                direction = Visca.ZoomDirection.Minus
+                Select Case True
+                    Case sender Is btZoomPlus
+                        direction = Visca.ZoomDirection.Plus
+                    Case sender Is btZoomMinus
+                        direction = Visca.ZoomDirection.Minus
+                End Select
+
+                focusAuto()
+                Dim move = visca.ZoomMove(direction, speed)
+                networkWriter(move)
+            Case Camera.ProtocolType.Onvif
+                Dim speed As Int16
+                If My.Computer.Keyboard.ShiftKeyDown Then
+                    speed = Onvif.MAX_SPEED
+                ElseIf My.Computer.Keyboard.CtrlKeyDown Then
+                    speed = Onvif.MIN_SPEED
+                Else
+                    speed = trkZoomSpeed.Value
+                End If
+
+                Select Case True
+                    Case sender Is btZoomPlus
+                        onvif.ZoomIn(speed)
+                    Case sender Is btZoomMinus
+                        onvif.ZoomOut(speed)
+                End Select
+
         End Select
 
-        focusAuto()
-        Dim move = visca.ZoomMove(direction, speed)
-        networkWriter(move)
     End Sub
 
     Private Sub zoomStop(sender As Object, e As MouseEventArgs) Handles _
         btZoomPlus.MouseUp, btZoomMinus.MouseUp
 
-        networkWriter(visca.ZoomStop())
+        Select Case camera.protocol
+            Case Camera.ProtocolType.ViscaTCP
+                networkWriter(visca.ZoomStop())
+            Case Camera.ProtocolType.Onvif
+                onvif.StopMotion()
+        End Select
+
     End Sub
 
     Private Sub networkWriter(data As Byte())
@@ -235,6 +345,9 @@ Public Class FrmCameraContol
     End Sub
 
     Private Sub UpdatePosition()
+        If camera.protocol = Camera.ProtocolType.Onvif Then
+            Return
+        End If
         If isUpdatingPosition Then
             Return
         End If
@@ -341,18 +454,33 @@ Public Class FrmCameraContol
 
         Dim preset As CameraPreset = lstvPresets.SelectedItems(0).Tag
 
-        Dim speed As Byte
-        If My.Computer.Keyboard.ShiftKeyDown Then
-            speed = Visca.PAN_MAX_SPEED
-        ElseIf My.Computer.Keyboard.CtrlKeyDown Then
-            speed = Visca.PAN_MIN_SPEED
-        Else
-            speed = trkPTSpeed.Value
-        End If
+        Select Case camera.protocol
+            Case Camera.ProtocolType.ViscaTCP
+                Dim speed As Byte
+                If My.Computer.Keyboard.ShiftKeyDown Then
+                    speed = Visca.PAN_MAX_SPEED
+                ElseIf My.Computer.Keyboard.CtrlKeyDown Then
+                    speed = Visca.PAN_MIN_SPEED
+                Else
+                    speed = trkPTSpeed.Value
+                End If
 
-        focusAuto()
-        networkWriter(visca.PresetSpeed(speed))
-        networkWriter(visca.GetPreset(preset.id))
+                focusAuto()
+
+                networkWriter(visca.PresetSpeed(speed))
+                networkWriter(visca.GetPreset(preset.id))
+            Case Camera.ProtocolType.Onvif
+                Dim speed As Int16
+                If My.Computer.Keyboard.ShiftKeyDown Then
+                    speed = Onvif.MAX_SPEED
+                ElseIf My.Computer.Keyboard.CtrlKeyDown Then
+                    speed = Onvif.MIN_SPEED
+                Else
+                    speed = trkPTSpeed.Value
+                End If
+                onvif.MoveToPreset(preset.id, speed)
+        End Select
+
     End Sub
 
     Private Sub EditPresetNameToolStripMenuItem_Click(sender As Object, e As EventArgs) Handles EditPresetNameToolStripMenuItem.Click
@@ -369,9 +497,17 @@ Public Class FrmCameraContol
     End Sub
 
     Private Sub btSavePreset_Click(sender As Object, e As EventArgs) Handles btSavePreset.Click
-        If Not tcpClient.Connected() Then
-            Return
-        End If
+        Select Case camera.protocol
+            Case Camera.ProtocolType.ViscaTCP
+                If Not tcpClient.Connected() Then
+                    Return
+                End If
+            Case Camera.ProtocolType.Onvif
+                If Not onvif.initialised Then
+                    Return
+                End If
+        End Select
+
 
         Dim name As String = InputBox("Set a preset name",, "")
         If name = "" Then
@@ -388,14 +524,28 @@ Public Class FrmCameraContol
         preset.zoom = camera.zoomPosition
 
         Dim presetId = camera.AddPreset(preset)
-        networkWriter(visca.SetPreset(presetId))
+
+        Select Case camera.protocol
+            Case Camera.ProtocolType.ViscaTCP
+                networkWriter(visca.SetPreset(presetId))
+            Case Camera.ProtocolType.Onvif
+                onvif.SetPreset(presetId, preset.name)
+        End Select
+
         LoadPresets()
     End Sub
 
     Private Sub UpdatePresetToolStripMenuItem_Click(sender As Object, e As EventArgs) Handles UpdatePresetToolStripMenuItem.Click
-        If Not tcpClient.Connected() Then
-            Return
-        End If
+        Select Case camera.protocol
+            Case Camera.ProtocolType.ViscaTCP
+                If Not tcpClient.Connected() Then
+                    Return
+                End If
+            Case Camera.ProtocolType.Onvif
+                If Not onvif.initialised Then
+                    Return
+                End If
+        End Select
 
         UpdatePosition()
 
@@ -405,7 +555,12 @@ Public Class FrmCameraContol
         preset.zoom = camera.zoomPosition
 
         camera.UpdatePreset(preset)
-        networkWriter(visca.SetPreset(preset.id))
+        Select Case camera.protocol
+            Case Camera.ProtocolType.ViscaTCP
+                networkWriter(visca.SetPreset(preset.id))
+            Case Camera.ProtocolType.Onvif
+                onvif.SetPreset(preset.id, preset.name)
+        End Select
         LoadPresets()
     End Sub
 
@@ -418,12 +573,17 @@ Public Class FrmCameraContol
     End Sub
 
     Private Sub btCenter_MouseDown(sender As Object, e As MouseEventArgs) Handles btCenter.MouseDown
-        focusAuto()
-        If My.Computer.Keyboard.ShiftKeyDown Then
-            networkWriter(visca.PTHome)
-        Else
-            networkWriter(visca.PTStop())
-        End If
+        Select Case camera.protocol
+            Case Camera.ProtocolType.ViscaTCP
+                focusAuto()
+                If My.Computer.Keyboard.ShiftKeyDown Then
+                    networkWriter(visca.PTHome)
+                Else
+                    networkWriter(visca.PTStop())
+                End If
+            Case Camera.ProtocolType.Onvif
+                onvif.StopMotion()
+        End Select
     End Sub
 
     Private Sub AboutToolStripMenuItem_Click(sender As Object, e As EventArgs) Handles AboutToolStripMenuItem.Click

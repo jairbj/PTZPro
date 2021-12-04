@@ -32,6 +32,7 @@ Public Class Camera
 
     Enum ProtocolType
         ViscaTCP = 1
+        Onvif = 2
     End Enum
 
     Public Sub New(iniFileName)
